@@ -250,7 +250,7 @@
       id="rate"
       type="number"
       step="0.01"
-      placeholder="Enter interest rate"
+      placeholder="Enter interest in ₹ per month"
       autocomplete="off"
       min="0"
       aria-required="true"
@@ -457,8 +457,8 @@
         rateLabelText.textContent = "₹ per month";
         rateInput.placeholder = "Enter interest in ₹ per month";
       } else {
-        rateLabelText.textContent = "% per annum";
-        rateInput.placeholder = "Enter percent per annum";
+        rateLabelText.textContent = "% per month";
+        rateInput.placeholder = "Enter interest in % per month";
       }
       validateInputs();
       updateRateWords();
@@ -719,4 +719,4 @@
     });
   </script>
 </body>
-  </html>
+</html>
