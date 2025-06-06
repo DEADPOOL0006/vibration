@@ -336,6 +336,16 @@ function numberToWords(num) {
   return convert(num).trim();
 }
 
+// 3.1 Convert amount with paise to words for "Final Amount"
+function amountToWordsWithPaise(amount) {
+  amount = parseFloat(amount);
+  let rupees = Math.floor(amount);
+  let paise = Math.round((amount - rupees) * 100);
+  let rupeesWords = numberToWords(rupees) + " Rupees";
+  let paiseWords = paise > 0 ? " and " + numberToWords(paise) + " Paise" : "";
+  return rupeesWords + paiseWords;
+}
+
 // 4. Format and show principal in words
 principalInput.addEventListener("input", () => {
   let raw = principalInput.value.replace(/,/g, '');
@@ -656,8 +666,8 @@ calcBtn.addEventListener("click", () => {
     }
   }
 
-  // 15. Finally, show the grand total
-  output += `Final Amount: ₹${formatIndianDecimal(currentTotal.toFixed(2))}`;
+  // 15. Finally, show the grand total (with words)
+  output += `Final Amount: ₹${formatIndianDecimal(currentTotal.toFixed(2))} (${amountToWordsWithPaise(currentTotal.toFixed(2))})`;
 
   resultDiv.style.color = "var(--primary-color)";
   resultDiv.textContent = output.trim();
