@@ -444,19 +444,25 @@ function validateInputs() {
   calcBtn.setAttribute("aria-disabled", !isValid);
 }
 
-// 9. Update “24% = ₹2.00 per month” line
+// 9. Show helper text for both rate types (MODIFIED)
 function updateRateWords() {
   const rawRate = parseFloat(rateInput.value);
   const rateType = rateTypeRadioGroup.querySelector('input[name="rateType"]:checked').value;
-  if (rateType === "percent" && !isNaN(rawRate) && rawRate > 0) {
-    const rupeePerMonth = rawRate / 12;
-    rateWordsDiv.innerText = `${rawRate}% = ₹${rupeePerMonth.toFixed(2)} per month`;
+  if (!isNaN(rawRate) && rawRate > 0) {
+    if (rateType === "percent") {
+      // 24% per annum ⇒ ₹ (24 ÷ 12) = ₹2.00 per month (per ₹100 principal)
+      const rupeePerMonth = rawRate / 12;
+      rateWordsDiv.innerText = `${rawRate} = ₹${rupeePerMonth.toFixed(2)} per month`;
+    } else {
+      // rupee mode: 2 = ₹2.00 per month
+      rateWordsDiv.innerText = `${rawRate} = ₹${rawRate.toFixed(2)} per month`;
+    }
   } else {
     rateWordsDiv.innerText = "";
   }
 }
 
-// 10. Update label/placeholder when Rate Type changes (MODIFIED AS REQUESTED)
+// 10. Update label/placeholder when Rate Type changes
 rateTypeRadioGroup.addEventListener("change", () => {
   const rateType = rateTypeRadioGroup.querySelector('input[name="rateType"]:checked').value;
   if (rateType === "rupee") {
@@ -521,8 +527,6 @@ calcBtn.addEventListener("click", () => {
   let output = "";
 
   // 13. Build a “monthlyFactor” based on rateType:
-  //  • If rupee:   monthlyFactor = rawRate / 100  
-  //  • If percent: monthlyFactor = (rawRate / 100) / 12  
   let monthlyFactor;
   if (rateType === "rupee") {
     monthlyFactor = rawRate / 100;
