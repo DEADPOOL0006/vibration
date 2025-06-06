@@ -168,7 +168,6 @@
         width: 100%;
       }
     }
-    /* MUI-like horizontal Radio Group */
     .mui-form-control {
       margin: 16px 0 0 0;
     }
@@ -191,7 +190,6 @@
       color: var(--text-light);
       font-size: 16px;
       user-select: none;
-      /* Remove mobile tap highlight */
       -webkit-tap-highlight-color: transparent;
       background: transparent !important;
     }
@@ -203,7 +201,7 @@
       box-shadow: none !important;
     }
     .mui-radio-label input[type="radio"] {
-      accent-color: #2196f3; /* MUI blue */
+      accent-color: #2196f3;
       width: 18px;
       height: 18px;
       margin: 0 4px 0 0;
@@ -286,437 +284,420 @@
     <!-- Result Box -->
     <div id="result" role="region" aria-live="polite"></div>
   </div>
-  <script>
-    // 1. Get all DOM elements
-    const principalInput = document.getElementById("principal");
-    const wordsDiv = document.getElementById("words");
-    const resultDiv = document.getElementById("result");
-    const calcBtn = document.getElementById("calcBtn");
-    const periodSelect = document.getElementById("period");
-    const rateInput = document.getElementById("rate");
-    const rateLabelText = document.getElementById("rateLabelText");
-    const rateWordsDiv = document.getElementById("rateWords");
-    const rateTypeRadioGroup = document.getElementById("rateTypeRadioGroup");
-    const startDay = document.getElementById("startDay");
-    const startMonth = document.getElementById("startMonth");
-    const startYear = document.getElementById("startYear");
-    const endDay = document.getElementById("endDay");
-    const endMonth = document.getElementById("endMonth");
-    const endYear = document.getElementById("endYear");
+<script>
+// 1. Get all DOM elements
+const principalInput = document.getElementById("principal");
+const wordsDiv = document.getElementById("words");
+const resultDiv = document.getElementById("result");
+const calcBtn = document.getElementById("calcBtn");
+const periodSelect = document.getElementById("period");
+const rateInput = document.getElementById("rate");
+const rateLabelText = document.getElementById("rateLabelText");
+const rateWordsDiv = document.getElementById("rateWords");
+const rateTypeRadioGroup = document.getElementById("rateTypeRadioGroup");
+const startDay = document.getElementById("startDay");
+const startMonth = document.getElementById("startMonth");
+const startYear = document.getElementById("startYear");
+const endDay = document.getElementById("endDay");
+const endMonth = document.getElementById("endMonth");
+const endYear = document.getElementById("endYear");
 
-    // 2. Format Indian number with commas
-    function formatIndianNumber(x) {
-      x = x.replace(/,/g, '');
-      if (x === '') return '';
-      let lastThree = x.slice(-3);
-      let other = x.slice(0, -3);
-      if (other !== '') lastThree = ',' + lastThree;
-      return other.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
-    }
-    function formatIndianDecimal(x) {
-      let parts = x.toString().split(".");
-      let integerPart = formatIndianNumber(parts[0]);
-      let decimalPart = parts[1] ? "." + parts[1] : "";
-      return integerPart + decimalPart;
-    }
-    // 3. Convert number to Indian words
-    function numberToWords(num) {
-      const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
-      const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
-      const teens = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
-      if (num === 0) return "Zero";
-      function convert(n) {
-        if (n < 10) return ones[n];
-        if (n >= 10 && n < 20) return teens[n - 10];
-        if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
-        if (n < 1000) return ones[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " " + convert(n % 100) : "");
-        if (n < 100000) return convert(Math.floor(n / 1000)) + " Thousand" + (n % 1000 ? " " + convert(n % 1000) : "");
-        if (n < 10000000) return convert(Math.floor(n / 100000)) + " Lakh" + (n % 100000 ? " " + convert(n % 100000) : "");
-        return convert(Math.floor(n / 10000000)) + " Crore" + (n % 10000000 ? " " + convert(n % 10000000) : "");
-      }
-      return convert(num).trim();
-    }
-    // 4. Format and show principal in words
-    principalInput.addEventListener("input", () => {
-      let raw = principalInput.value.replace(/,/g, '');
-      if (!/^\d*$/.test(raw)) {
-        raw = raw.replace(/\D/g, '');
-      }
-      principalInput.value = formatIndianNumber(raw);
-      let numeric = parseInt(raw) || 0;
-      wordsDiv.innerText = numeric ? numberToWords(numeric) : '';
-      validateInputs();
-      updateRateWords();
+// 2. Format Indian number with commas
+function formatIndianNumber(x) {
+  x = x.replace(/,/g, '');
+  if (x === '') return '';
+  let lastThree = x.slice(-3);
+  let other = x.slice(0, -3);
+  if (other !== '') lastThree = ',' + lastThree;
+  return other.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+}
+function formatIndianDecimal(x) {
+  let parts = x.toString().split(".");
+  let integerPart = formatIndianNumber(parts[0]);
+  let decimalPart = parts[1] ? "." + parts[1] : "";
+  return integerPart + decimalPart;
+}
+
+// 3. Convert number to Indian words
+function numberToWords(num) {
+  const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
+  const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+  const teens = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+  if (num === 0) return "Zero";
+  function convert(n) {
+    if (n < 10) return ones[n];
+    if (n >= 10 && n < 20) return teens[n - 10];
+    if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+    if (n < 1000) return ones[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " " + convert(n % 100) : "");
+    if (n < 100000) return convert(Math.floor(n / 1000)) + " Thousand" + (n % 1000 ? " " + convert(n % 1000) : "");
+    if (n < 10000000) return convert(Math.floor(n / 100000)) + " Lakh" + (n % 100000 ? " " + convert(n % 100000) : "");
+    return convert(Math.floor(n / 10000000)) + " Crore" + (n % 10000000 ? " " + convert(n % 10000000) : "");
+  }
+  return convert(num).trim();
+}
+
+// 4. Format and show principal in words
+principalInput.addEventListener("input", () => {
+  let raw = principalInput.value.replace(/,/g, '');
+  if (!/^\d*$/.test(raw)) {
+    raw = raw.replace(/\D/g, '');
+  }
+  principalInput.value = formatIndianNumber(raw);
+  let numeric = parseInt(raw) || 0;
+  wordsDiv.innerText = numeric ? numberToWords(numeric) : '';
+  validateInputs();
+  updateRateWords();
+});
+
+// 5. Populate day/month/year dropdowns
+function populateDateSelects() {
+  const daySelects = [startDay, endDay];
+  const monthSelects = [startMonth, endMonth];
+  const yearSelects = [startYear, endYear];
+  daySelects.forEach(sel => (sel.innerHTML = ""));
+  monthSelects.forEach(sel => (sel.innerHTML = ""));
+  yearSelects.forEach(sel => (sel.innerHTML = ""));
+  for (let d = 1; d <= 31; d++) {
+    daySelects.forEach(sel => {
+      const option = document.createElement("option");
+      option.value = d;
+      option.textContent = d;
+      sel.appendChild(option);
     });
-    // 5. Populate day/month/year dropdowns
-    function populateDateSelects() {
-      const daySelects = [startDay, endDay];
-      const monthSelects = [startMonth, endMonth];
-      const yearSelects = [startYear, endYear];
-      daySelects.forEach(sel => (sel.innerHTML = ""));
-      monthSelects.forEach(sel => (sel.innerHTML = ""));
-      yearSelects.forEach(sel => (sel.innerHTML = ""));
-      for (let d = 1; d <= 31; d++) {
-        daySelects.forEach(sel => {
-          const option = document.createElement("option");
-          option.value = d;
-          option.textContent = d;
-          sel.appendChild(option);
-        });
-      }
-      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      for (let m = 0; m < 12; m++) {
-        monthSelects.forEach(sel => {
-          const option = document.createElement("option");
-          option.value = m;
-          option.textContent = monthNames[m];
-          sel.appendChild(option);
-        });
-      }
-      const currentYear = new Date().getFullYear();
-      for (let y = currentYear - 50; y <= currentYear + 10; y++) {
-        yearSelects.forEach(sel => {
-          const option = document.createElement("option");
-          option.value = y;
-          option.textContent = y;
-          sel.appendChild(option);
-        });
-      }
+  }
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  for (let m = 0; m < 12; m++) {
+    monthSelects.forEach(sel => {
+      const option = document.createElement("option");
+      option.value = m;
+      option.textContent = monthNames[m];
+      sel.appendChild(option);
+    });
+  }
+  const currentYear = new Date().getFullYear();
+  for (let y = currentYear - 50; y <= currentYear + 10; y++) {
+    yearSelects.forEach(sel => {
+      const option = document.createElement("option");
+      option.value = y;
+      option.textContent = y;
+      sel.appendChild(option);
+    });
+  }
+}
+
+// 6. Set default dates
+function setDefaultDates() {
+  const today = new Date();
+  startDay.value = today.getDate();
+  startMonth.value = today.getMonth();
+  startYear.value = today.getFullYear();
+  const nextMonth = new Date(today);
+  nextMonth.setMonth(today.getMonth() + 1);
+  endDay.value = nextMonth.getDate();
+  endMonth.value = nextMonth.getMonth();
+  endYear.value = nextMonth.getFullYear();
+}
+
+// 7. Compute difference in years/months/days
+function getDateDifference(start, end) {
+  let s = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  let e = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+  if (e < s) return null;
+  let years = e.getFullYear() - s.getFullYear();
+  let months = e.getMonth() - s.getMonth();
+  let days = e.getDate() - s.getDate();
+  if (days < 0) {
+    months--;
+    days += new Date(e.getFullYear(), e.getMonth(), 0).getDate();
+  }
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+  return { years, months, days };
+}
+
+// 8. Enable/disable Calculate button
+function validateInputs() {
+  const principalRaw = principalInput.value.replace(/,/g, "");
+  const rate = rateInput.value;
+  const validPrincipal = /^\d+$/.test(principalRaw) && parseInt(principalRaw) > 0;
+  const validRate = !isNaN(rate) && parseFloat(rate) > 0;
+  const startValid = startDay.value && startMonth.value !== "" && startYear.value;
+  const endValid = endDay.value && endMonth.value !== "" && endYear.value;
+  const validDates = (() => {
+    if (!startValid || !endValid) return false;
+    const s = new Date(
+      parseInt(startYear.value),
+      parseInt(startMonth.value),
+      parseInt(startDay.value)
+    );
+    const e = new Date(
+      parseInt(endYear.value),
+      parseInt(endMonth.value),
+      parseInt(endDay.value)
+    );
+    return e >= s;
+  })();
+  const isValid = validPrincipal && validRate && validDates;
+  calcBtn.disabled = !isValid;
+  calcBtn.setAttribute("aria-disabled", !isValid);
+}
+
+// 9. Update “24% = ₹2.00 per month” line
+function updateRateWords() {
+  const rawRate = parseFloat(rateInput.value);
+  const rateType = rateTypeRadioGroup.querySelector('input[name="rateType"]:checked').value;
+  if (rateType === "percent" && !isNaN(rawRate) && rawRate > 0) {
+    const rupeePerMonth = rawRate / 12;
+    rateWordsDiv.innerText = `${rawRate}% = ₹${rupeePerMonth.toFixed(2)} per month`;
+  } else {
+    rateWordsDiv.innerText = "";
+  }
+}
+
+// 10. Update label/placeholder when Rate Type changes (MODIFIED)
+rateTypeRadioGroup.addEventListener("change", () => {
+  const rateType = rateTypeRadioGroup.querySelector('input[name="rateType"]:checked').value;
+  if (rateType === "rupee") {
+    rateLabelText.textContent = "₹ per month (per ₹100)";
+    rateInput.placeholder = "Enter interest in ₹ per month (per ₹100)";
+  } else {
+    rateLabelText.textContent = "% per month";
+    rateInput.placeholder = "Enter interest in % per month";
+  }
+  validateInputs();
+  updateRateWords();
+});
+
+// 11. Update on rate input changes
+rateInput.addEventListener("input", () => {
+  validateInputs();
+  updateRateWords();
+});
+
+// 12. Main calculation when user clicks “Calculate Interest”
+calcBtn.addEventListener("click", () => {
+  const principal = parseInt(principalInput.value.replace(/,/g, ""));
+  const rawRate = parseFloat(rateInput.value);
+  const rateType = rateTypeRadioGroup.querySelector('input[name="rateType"]:checked').value;
+  const period = periodSelect.value;
+  const sDate = new Date(
+    parseInt(startYear.value),
+    parseInt(startMonth.value),
+    parseInt(startDay.value)
+  );
+  const eDate = new Date(
+    parseInt(endYear.value),
+    parseInt(endMonth.value),
+    parseInt(endDay.value)
+  );
+  if (sDate.toDateString() === eDate.toDateString()) {
+    resultDiv.style.color = "var(--error-color)";
+    resultDiv.textContent =
+      "⚠️ Start Date and End Date are the same. No interest to calculate.";
+    resultDiv.classList.add("visible");
+    return;
+  }
+  if (eDate < sDate) {
+    resultDiv.style.color = "var(--error-color)";
+    resultDiv.textContent =
+      "Error: End date must be after or same as start date.";
+    resultDiv.classList.add("visible");
+    return;
+  }
+  const diff = getDateDifference(sDate, eDate);
+  if (!diff) {
+    resultDiv.style.color = "var(--error-color)";
+    resultDiv.textContent =
+      "Error: End date must be after or same as start date.";
+    resultDiv.classList.add("visible");
+    return;
+  }
+  let { years, months, days } = diff;
+  let totalMonths = years * 12 + months + days / 30;
+  let totalInterest = 0;
+  let currentTotal = principal;
+  let output = "";
+
+  // 13. Build a “monthlyFactor” based on rateType:
+  //  • If rupee:   monthlyFactor = rawRate / 100  
+  //  • If percent: monthlyFactor = (rawRate / 100) / 12  
+  let monthlyFactor;
+  if (rateType === "rupee") {
+    monthlyFactor = rawRate / 100;
+  } else {
+    monthlyFactor = rawRate / 100 / 12;
+  }
+
+  // 14. Perform compounding based on chosen period
+  if (period === "yearly") {
+    for (let i = 1; i <= years; i++) {
+      let yearlyInterest = currentTotal * monthlyFactor * 12;
+      output += `🗓️ Year ${i}\n`;
+      output += `💵 Your Amount: ₹${formatIndianDecimal(
+        currentTotal.toFixed(2)
+      )}\n`;
+      output += `💰 Interest: ₹${formatIndianDecimal(
+        yearlyInterest.toFixed(2)
+      )}\n`;
+      totalInterest += yearlyInterest;
+      currentTotal += yearlyInterest;
+      output += `📊 Total: ₹${formatIndianDecimal(
+        currentTotal.toFixed(2)
+      )}\n\n`;
     }
-    // 6. Set default dates
-    function setDefaultDates() {
-      const today = new Date();
-      startDay.value = today.getDate();
-      startMonth.value = today.getMonth();
-      startYear.value = today.getFullYear();
-      const nextMonth = new Date(today);
-      nextMonth.setMonth(today.getMonth() + 1);
-      endDay.value = nextMonth.getDate();
-      endMonth.value = nextMonth.getMonth();
-      endYear.value = nextMonth.getFullYear();
+    let extraMonths = months + days / 30;
+    if (extraMonths > 0) {
+      let partialInterest = currentTotal * monthlyFactor * extraMonths;
+      totalInterest += partialInterest;
+      currentTotal += partialInterest;
+      output += `🗓️ Partial Duration: ${months} months, ${days} days\n`;
+      output += `💰 Interest: ₹${formatIndianDecimal(
+        partialInterest.toFixed(2)
+      )}\n`;
+      output += `📊 Final Total: ₹${formatIndianDecimal(
+        currentTotal.toFixed(2)
+      )}\n\n`;
     }
-    // 7. Compute difference in years/months/days
-    function getDateDifference(start, end) {
-      let s = new Date(start.getFullYear(), start.getMonth(), start.getDate());
-      let e = new Date(end.getFullYear(), end.getMonth(), end.getDate());
-      if (e < s) return null;
-      let years = e.getFullYear() - s.getFullYear();
-      let months = e.getMonth() - s.getMonth();
-      let days = e.getDate() - s.getDate();
-      if (days < 0) {
-        months--;
-        days += new Date(e.getFullYear(), e.getMonth(), 0).getDate();
-      }
-      if (months < 0) {
-        years--;
-        months += 12;
-      }
-      return { years, months, days };
+  } else if (period === "semiannually") {
+    const totalHalfYears = Math.floor(totalMonths / 6);
+    const remainingMonths = totalMonths - totalHalfYears * 6;
+    for (let i = 1; i <= totalHalfYears; i++) {
+      let halfYearInterest = currentTotal * monthlyFactor * 6;
+      output += `🗓️ Half Year ${i}\n`;
+      output += `💵 Your Amount: ₹${formatIndianDecimal(
+        currentTotal.toFixed(2)
+      )}\n`;
+      output += `💰 Interest: ₹${formatIndianDecimal(
+        halfYearInterest.toFixed(2)
+      )}\n`;
+      totalInterest += halfYearInterest;
+      currentTotal += halfYearInterest;
+      output += `📊 Total: ₹${formatIndianDecimal(
+        currentTotal.toFixed(2)
+      )}\n\n`;
     }
-    // 8. Enable/disable Calculate button
-    function validateInputs() {
-      const principalRaw = principalInput.value.replace(/,/g, "");
-      const rate = rateInput.value;
-      const validPrincipal = /^\d+$/.test(principalRaw) && parseInt(principalRaw) > 0;
-      const validRate = !isNaN(rate) && parseFloat(rate) > 0;
-      const startValid = startDay.value && startMonth.value !== "" && startYear.value;
-      const endValid = endDay.value && endMonth.value !== "" && endYear.value;
-      const validDates = (() => {
-        if (!startValid || !endValid) return false;
-        const s = new Date(
-          parseInt(startYear.value),
-          parseInt(startMonth.value),
-          parseInt(startDay.value)
-        );
-        const e = new Date(
-          parseInt(endYear.value),
-          parseInt(endMonth.value),
-          parseInt(endDay.value)
-        );
-        return e >= s;
-      })();
-      const isValid = validPrincipal && validRate && validDates;
-      calcBtn.disabled = !isValid;
-      calcBtn.setAttribute("aria-disabled", !isValid);
+    if (remainingMonths > 0) {
+      let partialInterest = currentTotal * monthlyFactor * remainingMonths;
+      totalInterest += partialInterest;
+      currentTotal += partialInterest;
+      output += `🗓️ Partial Duration: ${remainingMonths.toFixed(2)} months\n`;
+      output += `💰 Interest: ₹${formatIndianDecimal(
+        partialInterest.toFixed(2)
+      )}\n`;
+      output += `📊 Final Total: ₹${formatIndianDecimal(
+        currentTotal.toFixed(2)
+      )}\n\n`;
     }
-    // 9. Update “24% = ₹2.00 per month” line
-    function updateRateWords() {
-      const rawRate = parseFloat(rateInput.value);
-      const rateType = rateTypeRadioGroup.querySelector('input[name="rateType"]:checked').value;
-      if (rateType === "percent" && !isNaN(rawRate) && rawRate > 0) {
-        const rupeePerMonth = rawRate / 12;
-        rateWordsDiv.innerText = `${rawRate}% = ₹${rupeePerMonth.toFixed(2)} per month`;
-      } else {
-        rateWordsDiv.innerText = "";
-      }
+  } else if (period === "quarterly") {
+    const totalQuarters = Math.floor(totalMonths / 3);
+    const remainingMonths = totalMonths - totalQuarters * 3;
+    for (let i = 1; i <= totalQuarters; i++) {
+      let quarterlyInterest = currentTotal * monthlyFactor * 3;
+      output += `🗓️ Quarter ${i}\n`;
+      output += `💵 Your Amount: ₹${formatIndianDecimal(
+        currentTotal.toFixed(2)
+      )}\n`;
+      output += `💰 Interest: ₹${formatIndianDecimal(
+        quarterlyInterest.toFixed(2)
+      )}\n`;
+      totalInterest += quarterlyInterest;
+      currentTotal += quarterlyInterest;
+      output += `📊 Total: ₹${formatIndianDecimal(
+        currentTotal.toFixed(2)
+      )}\n\n`;
     }
-    // 10. Update label/placeholder when Rate Type changes
-    rateTypeRadioGroup.addEventListener("change", () => {
-      const rateType = rateTypeRadioGroup.querySelector('input[name="rateType"]:checked').value;
-      if (rateType === "rupee") {
-        rateLabelText.textContent = "₹ per month";
-        rateInput.placeholder = "Enter interest in ₹ per month";
-      } else {
-        rateLabelText.textContent = "% per month";
-        rateInput.placeholder = "Enter interest in % per month";
-      }
-      validateInputs();
-      updateRateWords();
-    });
-    // 11. Update on rate input changes
-    rateInput.addEventListener("input", () => {
-      validateInputs();
-      updateRateWords();
-    });
-    // 12. Main calculation when user clicks “Calculate Interest”
-    calcBtn.addEventListener("click", () => {
-      const principal = parseInt(principalInput.value.replace(/,/g, ""));
-      const rawRate = parseFloat(rateInput.value);
-      const rateType = rateTypeRadioGroup.querySelector('input[name="rateType"]:checked').value;
-      const period = periodSelect.value;
-      const sDate = new Date(
-        parseInt(startYear.value),
-        parseInt(startMonth.value),
-        parseInt(startDay.value)
-      );
-      const eDate = new Date(
-        parseInt(endYear.value),
-        parseInt(endMonth.value),
-        parseInt(endDay.value)
-      );
-      if (sDate.toDateString() === eDate.toDateString()) {
-        resultDiv.style.color = "var(--error-color)";
-        resultDiv.textContent =
-          "⚠️ Start Date and End Date are the same. No interest to calculate.";
-        resultDiv.classList.add("visible");
-        return;
-      }
-      if (eDate < sDate) {
-        resultDiv.style.color = "var(--error-color)";
-        resultDiv.textContent =
-          "Error: End date must be after or same as start date.";
-        resultDiv.classList.add("visible");
-        return;
-      }
-      const diff = getDateDifference(sDate, eDate);
-      if (!diff) {
-        resultDiv.style.color = "var(--error-color)";
-        resultDiv.textContent =
-          "Error: End date must be after or same as start date.";
-        resultDiv.classList.add("visible");
-        return;
-      }
-      let { years, months, days } = diff;
-      let totalMonths = years * 12 + months + days / 30;
-      let totalInterest = 0;
-      let currentTotal = principal;
-      let output = "";
-      let monthlyFactor;
-      if (rateType === "rupee") {
-        monthlyFactor = rawRate;
-      } else {
-        monthlyFactor = rawRate / 100 / 12;
-      }
-      if (period === "yearly") {
-        for (let i = 1; i <= years; i++) {
-          let yearlyInterest;
-          if (rateType === "rupee") {
-            yearlyInterest = monthlyFactor * 12;
-          } else {
-            yearlyInterest = currentTotal * monthlyFactor * 12;
-          }
-          output += `🗓️ Year ${i}\n`;
-          output += `💵 Your Amount: ₹${formatIndianDecimal(
-            currentTotal.toFixed(2)
-          )}\n`;
-          output += `💰 Interest: ₹${formatIndianDecimal(
-            yearlyInterest.toFixed(2)
-          )}\n`;
-          totalInterest += yearlyInterest;
-          currentTotal += yearlyInterest;
-          output += `📊 Total: ₹${formatIndianDecimal(
-            currentTotal.toFixed(2)
-          )}\n\n`;
-        }
-        let extraMonths = months + days / 30;
-        if (extraMonths > 0) {
-          let partialInterest;
-          if (rateType === "rupee") {
-            partialInterest = monthlyFactor * extraMonths;
-          } else {
-            partialInterest = currentTotal * monthlyFactor * extraMonths;
-          }
-          totalInterest += partialInterest;
-          currentTotal += partialInterest;
-          output += `🗓️ Partial Duration: ${months} months, ${days} days\n`;
-          output += `💰 Interest: ₹${formatIndianDecimal(
-            partialInterest.toFixed(2)
-          )}\n`;
-          output += `📊 Final Total: ₹${formatIndianDecimal(
-            currentTotal.toFixed(2)
-          )}\n\n`;
-        }
-      } else if (period === "semiannually") {
-        const totalHalfYears = Math.floor(totalMonths / 6);
-        const remainingMonths = totalMonths - totalHalfYears * 6;
-        for (let i = 1; i <= totalHalfYears; i++) {
-          let halfYearInterest;
-          if (rateType === "rupee") {
-            halfYearInterest = monthlyFactor * 6;
-          } else {
-            halfYearInterest = currentTotal * monthlyFactor * 6;
-          }
-          output += `🗓️ Half Year ${i}\n`;
-          output += `💵 Your Amount: ₹${formatIndianDecimal(
-            currentTotal.toFixed(2)
-          )}\n`;
-          output += `💰 Interest: ₹${formatIndianDecimal(
-            halfYearInterest.toFixed(2)
-          )}\n`;
-          totalInterest += halfYearInterest;
-          currentTotal += halfYearInterest;
-          output += `📊 Total: ₹${formatIndianDecimal(
-            currentTotal.toFixed(2)
-          )}\n\n`;
-        }
-        if (remainingMonths > 0) {
-          let partialInterest;
-          if (rateType === "rupee") {
-            partialInterest = monthlyFactor * remainingMonths;
-          } else {
-            partialInterest = currentTotal * monthlyFactor * remainingMonths;
-          }
-          totalInterest += partialInterest;
-          currentTotal += partialInterest;
-          output += `🗓️ Partial Duration: ${remainingMonths.toFixed(2)} months\n`;
-          output += `💰 Interest: ₹${formatIndianDecimal(
-            partialInterest.toFixed(2)
-          )}\n`;
-          output += `📊 Final Total: ₹${formatIndianDecimal(
-            currentTotal.toFixed(2)
-          )}\n\n`;
-        }
-      } else if (period === "quarterly") {
-        const totalQuarters = Math.floor(totalMonths / 3);
-        const remainingMonths = totalMonths - totalQuarters * 3;
-        for (let i = 1; i <= totalQuarters; i++) {
-          let quarterlyInterest;
-          if (rateType === "rupee") {
-            quarterlyInterest = monthlyFactor * 3;
-          } else {
-            quarterlyInterest = currentTotal * monthlyFactor * 3;
-          }
-          output += `🗓️ Quarter ${i}\n`;
-          output += `💵 Your Amount: ₹${formatIndianDecimal(
-            currentTotal.toFixed(2)
-          )}\n`;
-          output += `💰 Interest: ₹${formatIndianDecimal(
-            quarterlyInterest.toFixed(2)
-          )}\n`;
-          totalInterest += quarterlyInterest;
-          currentTotal += quarterlyInterest;
-          output += `📊 Total: ₹${formatIndianDecimal(
-            currentTotal.toFixed(2)
-          )}\n\n`;
-        }
-        if (remainingMonths > 0) {
-          let partialInterest;
-          if (rateType === "rupee") {
-            partialInterest = monthlyFactor * remainingMonths;
-          } else {
-            partialInterest = currentTotal * monthlyFactor * remainingMonths;
-          }
-          totalInterest += partialInterest;
-          currentTotal += partialInterest;
-          output += `🗓️ Partial Duration: ${remainingMonths.toFixed(2)} months\n`;
-          output += `💰 Interest: ₹${formatIndianDecimal(
-            partialInterest.toFixed(2)
-          )}\n`;
-          output += `📊 Final Total: ₹${formatIndianDecimal(
-            currentTotal.toFixed(2)
-          )}\n\n`;
-        }
-      } else if (period === "monthly") {
-        const fullMonths = Math.floor(totalMonths);
-        const partialDays = (totalMonths - fullMonths) * 30;
-        for (let i = 1; i <= fullMonths; i++) {
-          let monthlyInterest;
-          if (rateType === "rupee") {
-            monthlyInterest = monthlyFactor;
-          } else {
-            monthlyInterest = currentTotal * monthlyFactor;
-          }
-          output += `🗓️ Month ${i}\n`;
-          output += `💵 Your Amount: ₹${formatIndianDecimal(
-            currentTotal.toFixed(2)
-          )}\n`;
-          output += `💰 Interest: ₹${formatIndianDecimal(
-            monthlyInterest.toFixed(2)
-          )}\n`;
-          totalInterest += monthlyInterest;
-          currentTotal += monthlyInterest;
-          output += `📊 Total: ₹${formatIndianDecimal(
-            currentTotal.toFixed(2)
-          )}\n\n`;
-        }
-        if (partialDays > 0) {
-          let partialInterest;
-          if (rateType === "rupee") {
-            partialInterest = monthlyFactor * (partialDays / 30);
-          } else {
-            partialInterest = currentTotal * monthlyFactor * (partialDays / 30);
-          }
-          totalInterest += partialInterest;
-          currentTotal += partialInterest;
-          output += `🗓️ Partial Duration: ${partialDays.toFixed(0)} days\n`;
-          output += `💰 Interest: ₹${formatIndianDecimal(
-            partialInterest.toFixed(2)
-          )}\n`;
-          output += `📊 Final Total: ₹${formatIndianDecimal(
-            currentTotal.toFixed(2)
-          )}\n\n`;
-        }
-      }
-      output += `Final Amount: ₹${formatIndianDecimal(currentTotal.toFixed(2))}`;
-      resultDiv.style.color = "var(--primary-color)";
-      resultDiv.textContent = output.trim();
-      resultDiv.classList.add("visible");
-    });
-    // 13. Listen for period and date changes
-    periodSelect.addEventListener("change", validateInputs);
-    [startDay, startMonth, startYear, endDay, endMonth, endYear].forEach((sel) => {
-      sel.addEventListener("change", validateInputs);
-    });
-    // 14. Reset button logic
-    document.getElementById("resetBtn").addEventListener("click", () => {
-      principalInput.value = "";
-      wordsDiv.textContent = "";
-      rateInput.value = "";
-      rateTypeRadioGroup.querySelector('input[value="rupee"]').checked = true;
-      rateLabelText.textContent = "₹ per month";
-      rateInput.placeholder = "Enter interest in ₹ per month";
-      rateWordsDiv.innerText = "";
-      periodSelect.value = "yearly";
-      setDefaultDates();
-      resultDiv.textContent = "";
-      resultDiv.classList.remove("visible");
-      calcBtn.disabled = true;
-      calcBtn.setAttribute("aria-disabled", "true");
-    });
-    // 15. Initial setup
-    populateDateSelects();
-    setDefaultDates();
-    validateInputs();
-    // 16. On mobile, lock zoom to avoid unexpected scaling
-    document.addEventListener("DOMContentLoaded", function () {
-      if (/Mobi|Android/i.test(navigator.userAgent)) {
-        let viewport = document.querySelector('meta[name="viewport"]');
-        if (viewport) {
-          viewport.content =
-            "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
-        }
-      }
-    });
-  </script>
+    if (remainingMonths > 0) {
+      let partialInterest = currentTotal * monthlyFactor * remainingMonths;
+      totalInterest += partialInterest;
+      currentTotal += partialInterest;
+      output += `🗓️ Partial Duration: ${remainingMonths.toFixed(2)} months\n`;
+      output += `💰 Interest: ₹${formatIndianDecimal(
+        partialInterest.toFixed(2)
+      )}\n`;
+      output += `📊 Final Total: ₹${formatIndianDecimal(
+        currentTotal.toFixed(2)
+      )}\n\n`;
+    }
+  } else if (period === "monthly") {
+    const fullMonths = Math.floor(totalMonths);
+    const partialDays = (totalMonths - fullMonths) * 30;
+    for (let i = 1; i <= fullMonths; i++) {
+      let monthlyInterest = currentTotal * monthlyFactor;
+      output += `🗓️ Month ${i}\n`;
+      output += `💵 Your Amount: ₹${formatIndianDecimal(
+        currentTotal.toFixed(2)
+      )}\n`;
+      output += `💰 Interest: ₹${formatIndianDecimal(
+        monthlyInterest.toFixed(2)
+      )}\n`;
+      totalInterest += monthlyInterest;
+      currentTotal += monthlyInterest;
+      output += `📊 Total: ₹${formatIndianDecimal(
+        currentTotal.toFixed(2)
+      )}\n\n`;
+    }
+    if (partialDays > 0) {
+      let partialInterest = currentTotal * monthlyFactor * (partialDays / 30);
+      totalInterest += partialInterest;
+      currentTotal += partialInterest;
+      output += `🗓️ Partial Duration: ${partialDays.toFixed(0)} days\n`;
+      output += `💰 Interest: ₹${formatIndianDecimal(
+        partialInterest.toFixed(2)
+      )}\n`;
+      output += `📊 Final Total: ₹${formatIndianDecimal(
+        currentTotal.toFixed(2)
+      )}\n\n`;
+    }
+  }
+
+  // 15. Finally, show the grand total
+  output += `Final Amount: ₹${formatIndianDecimal(currentTotal.toFixed(2))}`;
+
+  resultDiv.style.color = "var(--primary-color)";
+  resultDiv.textContent = output.trim();
+  resultDiv.classList.add("visible");
+});
+
+// 16. Listen for period and date changes
+periodSelect.addEventListener("change", validateInputs);
+[startDay, startMonth, startYear, endDay, endMonth, endYear].forEach((sel) => {
+  sel.addEventListener("change", validateInputs);
+});
+
+// 17. Reset button logic
+document.getElementById("resetBtn").addEventListener("click", () => {
+  principalInput.value = "";
+  wordsDiv.textContent = "";
+  rateInput.value = "";
+  rateTypeRadioGroup.querySelector('input[value="rupee"]').checked = true;
+  rateLabelText.textContent = "₹ per month";
+  rateInput.placeholder = "Enter interest in ₹ per month";
+  rateWordsDiv.innerText = "";
+  periodSelect.value = "yearly";
+  setDefaultDates();
+  resultDiv.textContent = "";
+  resultDiv.classList.remove("visible");
+  calcBtn.disabled = true;
+  calcBtn.setAttribute("aria-disabled", "true");
+});
+
+// 18. Initial setup
+populateDateSelects();
+setDefaultDates();
+validateInputs();
+
+// 19. On mobile, lock zoom to avoid unexpected scaling
+document.addEventListener("DOMContentLoaded", function () {
+  if (/Mobi|Android/i.test(navigator.userAgent)) {
+    let viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) {
+      viewport.content =
+        "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+    }
+  }
+});
+</script>
 </body>
 </html>
