@@ -456,12 +456,12 @@ function updateRateWords() {
   }
 }
 
-// 10. Update label/placeholder when Rate Type changes (MODIFIED)
+// 10. Update label/placeholder when Rate Type changes (MODIFIED AS REQUESTED)
 rateTypeRadioGroup.addEventListener("change", () => {
   const rateType = rateTypeRadioGroup.querySelector('input[name="rateType"]:checked').value;
   if (rateType === "rupee") {
-    rateLabelText.textContent = "₹ per month (per ₹100)";
-    rateInput.placeholder = "Enter interest in ₹ per month (per ₹100)";
+    rateLabelText.textContent = "₹ per month";
+    rateInput.placeholder = "Enter interest in ₹ per month";
   } else {
     rateLabelText.textContent = "% per month";
     rateInput.placeholder = "Enter interest in % per month";
