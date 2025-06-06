@@ -15,44 +15,38 @@
       --text-light: #fff;
       --text-secondary: #ccc;
     }
+    html, body {
+      box-sizing: border-box;
+      overflow-x: hidden;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    *, *::before, *::after { box-sizing: inherit; }
     body {
       font-family: 'Segoe UI', system-ui, sans-serif;
       background-color: var(--bg-dark);
       color: var(--text-light);
-      display: flex;
-      justify-content: center;
-      align-items: center;
       min-height: 100vh;
       margin: 0;
-      padding: 16px;
+      padding: 0;
     }
     .container {
       background-color: var(--container-bg);
       padding: 40px 50px;
-      border-radius: 12px;
-      width: 100%;
-      max-width: 600px;
-      border: 1px solid var(--border-color);
+      min-height: 100vh;
+      border-radius: 0;
+      border: none;
       font-size: 18px;
       line-height: 1.6;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    }
-    @media (min-width: 1200px) {
-      .container {
-        max-width: 700px;
-        padding: 50px 60px;
-      }
-    }
-    @media (max-width: 768px) {
-      .container {
-        padding: 30px;
-        font-size: 16px;
-      }
-    }
-    @media (max-width: 480px) {
-      .container {
-        padding: 20px 16px;
-      }
+      box-shadow: none;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
     }
     h1 {
       text-align: center;
@@ -132,16 +126,14 @@
       white-space: pre-line;
       color: var(--text-light);
       opacity: 0;
-      max-height: 0;
-      overflow: hidden;
-      transition: opacity 0.5s ease, max-height 0.5s ease, padding 0.5s ease;
       background-color: rgba(0, 0, 0, 0.4);
-      padding: 0;
+      padding: 0 24px;
       border-radius: 8px;
+      box-sizing: border-box;
+      transition: opacity 0.5s ease, padding 0.5s ease;
     }
     #result.visible {
       opacity: 1;
-      max-height: 8000px;
       padding: 24px;
     }
     #words {
@@ -161,18 +153,6 @@
       color: var(--text-secondary);
       margin-top: 4px;
       min-height: 20px;
-    }
-    @media (max-width: 360px) {
-      .date-row, .duration-row {
-        flex-direction: column;
-        gap: 8px;
-      }
-      .buttons {
-        flex-direction: column;
-      }
-      button {
-        width: 100%;
-      }
     }
     .mui-form-control {
       margin: 16px 0 0 0;
@@ -216,6 +196,68 @@
     .mui-radio-label input[type="radio"]:focus-visible {
       outline: none !important;
       box-shadow: none !important;
+    }
+    @media (max-width: 900px) {
+      .container {
+        padding: 24px 8px;
+        font-size: 16px;
+      }
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 8px 2vw;
+        font-size: 15px;
+      }
+      h1 {
+        font-size: 1.2em;
+      }
+      .mui-radio-label {
+        font-size: 15px;
+      }
+      #result {
+        font-size: 15px;
+        padding-left: 2vw;
+        padding-right: 2vw;
+      }
+    }
+    @media (max-width: 480px) {
+      .container {
+        padding: 2px 0;
+        font-size: 13.5px;
+        border-radius: 0;
+      }
+      h1 {
+        font-size: 1.05em;
+      }
+      .date-row, .duration-row {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .buttons {
+        flex-direction: column;
+        gap: 8px;
+      }
+      button {
+        width: 100%;
+        font-size: 15px;
+        padding: 10px;
+      }
+      input, select {
+        font-size: 15px;
+        padding: 10px;
+      }
+    }
+    @media (max-width: 360px) {
+      .container {
+        padding: 1px 0;
+        font-size: 12px;
+      }
+      h1 {
+        font-size: 0.95em;
+      }
+      .mui-radio-label {
+        font-size: 12px;
+      }
     }
   </style>
 </head>
@@ -832,4 +874,4 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 </body>
-</html>
+</html>  
