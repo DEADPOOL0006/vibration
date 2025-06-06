@@ -334,9 +334,9 @@
     <div id="durationInputs" style="display: none;">
       <label>Duration</label>
       <div class="duration-row" role="group" aria-label="Duration">
-        <input id="years" type="number" min="0" max="99" step="1" placeholder="Years" />
-        <input id="months" type="number" min="0" max="11" step="1" placeholder="Months" />
-        <input id="days" type="number" min="0" max="30" step="1" placeholder="Days" />
+        <input id="years" type="number" min="0" step="1" placeholder="Years" />
+        <input id="months" type="number" min="0" step="1" placeholder="Months" />
+        <input id="days" type="number" min="0" step="1" placeholder="Days" />
       </div>
       <div id="durationText"></div>
     </div>
@@ -602,12 +602,9 @@ rateInput.addEventListener("input", () => {
   updateRateWords();
 });
 
-// 11.1 Update on duration input changes
+// 11.1 Update on duration input changes (NO CLAMPING, UNLIMITED MONTHS/DAYS)
 [yearsInput, monthsInput, daysInput].forEach(el => {
   el.addEventListener("input", () => {
-    // Clamp months and days
-    if (parseInt(monthsInput.value) > 11) monthsInput.value = 11;
-    if (parseInt(daysInput.value) > 30) daysInput.value = 30;
     let y = parseInt(yearsInput.value) || 0;
     let m = parseInt(monthsInput.value) || 0;
     let d = parseInt(daysInput.value) || 0;
@@ -852,7 +849,6 @@ document.getElementById("resetBtn").addEventListener("click", () => {
 populateDateSelects();
 setDefaultDates();
 validateInputs();
-  
 </script>
 </body>
 </html>
