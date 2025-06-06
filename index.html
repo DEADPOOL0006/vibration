@@ -79,12 +79,12 @@
     input:focus, select:focus {
       outline: 2px solid var(--primary-color);
     }
-    .date-row {
+    .date-row, .duration-row {
       display: flex;
       justify-content: space-between;
       gap: 10px;
     }
-    .date-row select {
+    .date-row select, .duration-row select, .duration-row input {
       flex: 1;
       min-width: 0;
     }
@@ -156,8 +156,14 @@
       margin-top: 4px;
       min-height: 20px;
     }
+    #durationText {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      min-height: 20px;
+    }
     @media (max-width: 360px) {
-      .date-row {
+      .date-row, .duration-row {
         flex-direction: column;
         gap: 8px;
       }
@@ -262,19 +268,44 @@
       <option value="semiannually">Semi-Annually</option>
       <option value="yearly" selected>Annually</option>
     </select>
-    <!-- Start Date -->
-    <label>Start Date</label>
-    <div class="date-row" role="group" aria-label="Start Date">
-      <select id="startDay" aria-label="Start Day"></select>
-      <select id="startMonth" aria-label="Start Month"></select>
-      <select id="startYear" aria-label="Start Year"></select>
+    <!-- Loan Duration Type Radio Group (NEW) -->
+    <div class="mui-form-control">
+      <label id="duration-type-label" class="mui-form-label">Interest Duration Type</label>
+      <div id="durationTypeRadioGroup" class="mui-radio-group" role="radiogroup" aria-labelledby="duration-type-label">
+        <label class="mui-radio-label">
+          <input type="radio" name="durationType" value="dates" checked>
+          Date Range
+        </label>
+        <label class="mui-radio-label">
+          <input type="radio" name="durationType" value="period">
+          Time Period
+        </label>
+      </div>
     </div>
-    <!-- End Date -->
-    <label>End Date</label>
-    <div class="date-row" role="group" aria-label="End Date">
-      <select id="endDay" aria-label="End Day"></select>
-      <select id="endMonth" aria-label="End Month"></select>
-      <select id="endYear" aria-label="End Year"></select>
+    <!-- Start/End Date -->
+    <div id="dateInputs">
+      <label>Start Date</label>
+      <div class="date-row" role="group" aria-label="Start Date">
+        <select id="startDay" aria-label="Start Day"></select>
+        <select id="startMonth" aria-label="Start Month"></select>
+        <select id="startYear" aria-label="Start Year"></select>
+      </div>
+      <label>End Date</label>
+      <div class="date-row" role="group" aria-label="End Date">
+        <select id="endDay" aria-label="End Day"></select>
+        <select id="endMonth" aria-label="End Month"></select>
+        <select id="endYear" aria-label="End Year"></select>
+      </div>
+    </div>
+    <!-- Duration Inputs (Years/Months/Days) -->
+    <div id="durationInputs" style="display: none;">
+      <label>Duration</label>
+      <div class="duration-row" role="group" aria-label="Duration">
+        <input id="years" type="number" min="0" max="99" step="1" placeholder="Years" />
+        <input id="months" type="number" min="0" max="11" step="1" placeholder="Months" />
+        <input id="days" type="number" min="0" max="30" step="1" placeholder="Days" />
+      </div>
+      <div id="durationText"></div>
     </div>
     <!-- Buttons -->
     <div class="buttons">
@@ -301,6 +332,15 @@ const startYear = document.getElementById("startYear");
 const endDay = document.getElementById("endDay");
 const endMonth = document.getElementById("endMonth");
 const endYear = document.getElementById("endYear");
+
+// Duration controls
+const durationTypeRadioGroup = document.getElementById("durationTypeRadioGroup");
+const dateInputs = document.getElementById("dateInputs");
+const durationInputs = document.getElementById("durationInputs");
+const yearsInput = document.getElementById("years");
+const monthsInput = document.getElementById("months");
+const daysInput = document.getElementById("days");
+const durationText = document.getElementById("durationText");
 
 // 2. Format Indian number with commas
 function formatIndianNumber(x) {
@@ -427,29 +467,53 @@ function getDateDifference(start, end) {
   return { years, months, days };
 }
 
+// 7.1 Compose readable duration from years, months, days
+function formatDuration(years, months, days) {
+  let txt = [];
+  if (years > 0) txt.push(years + (years === 1 ? " Year" : " Years"));
+  if (months > 0) txt.push(months + (months === 1 ? " Month" : " Months"));
+  if (days > 0) txt.push(days + (days === 1 ? " Day" : " Days"));
+  return txt.length ? txt.join(", ") : "0 Days";
+}
+
 // 8. Enable/disable Calculate button
 function validateInputs() {
   const principalRaw = principalInput.value.replace(/,/g, "");
   const rate = rateInput.value;
   const validPrincipal = /^\d+$/.test(principalRaw) && parseInt(principalRaw) > 0;
   const validRate = !isNaN(rate) && parseFloat(rate) > 0;
-  const startValid = startDay.value && startMonth.value !== "" && startYear.value;
-  const endValid = endDay.value && endMonth.value !== "" && endYear.value;
-  const validDates = (() => {
-    if (!startValid || !endValid) return false;
-    const s = new Date(
-      parseInt(startYear.value),
-      parseInt(startMonth.value),
-      parseInt(startDay.value)
-    );
-    const e = new Date(
-      parseInt(endYear.value),
-      parseInt(endMonth.value),
-      parseInt(endDay.value)
-    );
-    return e >= s;
-  })();
-  const isValid = validPrincipal && validRate && validDates;
+
+  // Duration type
+  const durationType = durationTypeRadioGroup.querySelector('input[name="durationType"]:checked').value;
+
+  let validDuration = false;
+  if (durationType === 'dates') {
+    const startValid = startDay.value && startMonth.value !== "" && startYear.value;
+    const endValid = endDay.value && endMonth.value !== "" && endYear.value;
+    const validDates = (() => {
+      if (!startValid || !endValid) return false;
+      const s = new Date(
+        parseInt(startYear.value),
+        parseInt(startMonth.value),
+        parseInt(startDay.value)
+      );
+      const e = new Date(
+        parseInt(endYear.value),
+        parseInt(endMonth.value),
+        parseInt(endDay.value)
+      );
+      return e >= s;
+    })();
+    validDuration = validDates;
+  } else {
+    // duration period mode
+    const y = parseInt(yearsInput.value) || 0;
+    const m = parseInt(monthsInput.value) || 0;
+    const d = parseInt(daysInput.value) || 0;
+    validDuration = (y + m + d) > 0;
+  }
+
+  const isValid = validPrincipal && validRate && validDuration;
   calcBtn.disabled = !isValid;
   calcBtn.setAttribute("aria-disabled", !isValid);
 }
@@ -486,10 +550,37 @@ rateTypeRadioGroup.addEventListener("change", () => {
   updateRateWords();
 });
 
+// 10.1 Update duration controls when duration type changes
+durationTypeRadioGroup.addEventListener("change", () => {
+  const durationType = durationTypeRadioGroup.querySelector('input[name="durationType"]:checked').value;
+  if (durationType === "dates") {
+    dateInputs.style.display = '';
+    durationInputs.style.display = 'none';
+  } else {
+    dateInputs.style.display = 'none';
+    durationInputs.style.display = '';
+  }
+  validateInputs();
+});
+
 // 11. Update on rate input changes
 rateInput.addEventListener("input", () => {
   validateInputs();
   updateRateWords();
+});
+
+// 11.1 Update on duration input changes
+[yearsInput, monthsInput, daysInput].forEach(el => {
+  el.addEventListener("input", () => {
+    // Clamp months and days
+    if (parseInt(monthsInput.value) > 11) monthsInput.value = 11;
+    if (parseInt(daysInput.value) > 30) daysInput.value = 30;
+    let y = parseInt(yearsInput.value) || 0;
+    let m = parseInt(monthsInput.value) || 0;
+    let d = parseInt(daysInput.value) || 0;
+    durationText.textContent = formatDuration(y, m, d);
+    validateInputs();
+  });
 });
 
 // 12. Main calculation when user clicks “Calculate Interest”
@@ -498,40 +589,61 @@ calcBtn.addEventListener("click", () => {
   const rawRate = parseFloat(rateInput.value);
   const rateType = rateTypeRadioGroup.querySelector('input[name="rateType"]:checked').value;
   const period = periodSelect.value;
-  const sDate = new Date(
-    parseInt(startYear.value),
-    parseInt(startMonth.value),
-    parseInt(startDay.value)
-  );
-  const eDate = new Date(
-    parseInt(endYear.value),
-    parseInt(endMonth.value),
-    parseInt(endDay.value)
-  );
-  if (sDate.toDateString() === eDate.toDateString()) {
-    resultDiv.style.color = "var(--error-color)";
-    resultDiv.textContent =
-      "⚠️ Start Date and End Date are the same. No interest to calculate.";
-    resultDiv.classList.add("visible");
-    return;
+
+  // Duration logic
+  let years, months, days, totalMonths;
+  const durationType = durationTypeRadioGroup.querySelector('input[name="durationType"]:checked').value;
+  if (durationType === "dates") {
+    const sDate = new Date(
+      parseInt(startYear.value),
+      parseInt(startMonth.value),
+      parseInt(startDay.value)
+    );
+    const eDate = new Date(
+      parseInt(endYear.value),
+      parseInt(endMonth.value),
+      parseInt(endDay.value)
+    );
+    if (sDate.toDateString() === eDate.toDateString()) {
+      resultDiv.style.color = "var(--error-color)";
+      resultDiv.textContent =
+        "⚠️ Start Date and End Date are the same. No interest to calculate.";
+      resultDiv.classList.add("visible");
+      return;
+    }
+    if (eDate < sDate) {
+      resultDiv.style.color = "var(--error-color)";
+      resultDiv.textContent =
+        "Error: End date must be after or same as start date.";
+      resultDiv.classList.add("visible");
+      return;
+    }
+    const diff = getDateDifference(sDate, eDate);
+    if (!diff) {
+      resultDiv.style.color = "var(--error-color)";
+      resultDiv.textContent =
+        "Error: End date must be after or same as start date.";
+      resultDiv.classList.add("visible");
+      return;
+    }
+    years = diff.years;
+    months = diff.months;
+    days = diff.days;
+    totalMonths = years * 12 + months + days / 30;
+  } else {
+    years = parseInt(yearsInput.value) || 0;
+    months = parseInt(monthsInput.value) || 0;
+    days = parseInt(daysInput.value) || 0;
+    if (years === 0 && months === 0 && days === 0) {
+      resultDiv.style.color = "var(--error-color)";
+      resultDiv.textContent =
+        "Error: Please enter a duration greater than zero.";
+      resultDiv.classList.add("visible");
+      return;
+    }
+    totalMonths = years * 12 + months + days / 30;
   }
-  if (eDate < sDate) {
-    resultDiv.style.color = "var(--error-color)";
-    resultDiv.textContent =
-      "Error: End date must be after or same as start date.";
-    resultDiv.classList.add("visible");
-    return;
-  }
-  const diff = getDateDifference(sDate, eDate);
-  if (!diff) {
-    resultDiv.style.color = "var(--error-color)";
-    resultDiv.textContent =
-      "Error: End date must be after or same as start date.";
-    resultDiv.classList.add("visible");
-    return;
-  }
-  let { years, months, days } = diff;
-  let totalMonths = years * 12 + months + days / 30;
+
   let totalInterest = 0;
   let currentTotal = principal;
   let output = "";
@@ -665,7 +777,6 @@ calcBtn.addEventListener("click", () => {
       )}\n\n`;
     }
   }
-
   // 15. Finally, show the grand total (with words)
   output += `Final Amount: ₹${formatIndianDecimal(currentTotal.toFixed(2))} (${amountToWordsWithPaise(currentTotal.toFixed(2))})`;
 
@@ -689,6 +800,13 @@ document.getElementById("resetBtn").addEventListener("click", () => {
   rateLabelText.textContent = "₹ per month";
   rateInput.placeholder = "Enter interest in ₹ per month";
   rateWordsDiv.innerText = "";
+  durationTypeRadioGroup.querySelector('input[value="dates"]').checked = true;
+  dateInputs.style.display = '';
+  durationInputs.style.display = 'none';
+  yearsInput.value = '';
+  monthsInput.value = '';
+  daysInput.value = '';
+  durationText.textContent = '';
   periodSelect.value = "yearly";
   setDefaultDates();
   resultDiv.textContent = "";
