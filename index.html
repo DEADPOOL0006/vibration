@@ -705,16 +705,19 @@ calcBtn.addEventListener("click", () => {
     }
     let extraMonths = months + days / 30;
     if (extraMonths > 0) {
+      // Partial duration: split months/days
+      const partialMonths = Math.floor(extraMonths);
+      const partialDays = Math.round((extraMonths - partialMonths) * 30);
+      let durationStr = [];
+      if (partialMonths > 0) durationStr.push(`${partialMonths} months`);
+      if (partialDays > 0) durationStr.push(`${partialDays} days`);
+      if (durationStr.length === 0) durationStr.push("0 days");
       let partialInterest = currentTotal * monthlyFactor * extraMonths;
       totalInterest += partialInterest;
       currentTotal += partialInterest;
-      output += `🗓️ Partial Duration: ${months} months, ${days} days\n`;
-      output += `💰 Interest: ₹${formatIndianDecimal(
-        partialInterest.toFixed(2)
-      )}\n`;
-      output += `📊 Final Total: ₹${formatIndianDecimal(
-        currentTotal.toFixed(2)
-      )}\n\n`;
+      output += `🗓️ Partial Duration: ${durationStr.join(", ")}\n`;
+      output += `💰 Interest: ₹${formatIndianDecimal(partialInterest.toFixed(2))}\n`;
+      output += `📊 Final Total: ₹${formatIndianDecimal(currentTotal.toFixed(2))}\n\n`;
     }
   } else if (period === "semiannually") {
     const totalHalfYears = Math.floor(totalMonths / 6);
@@ -735,16 +738,19 @@ calcBtn.addEventListener("click", () => {
       )}\n\n`;
     }
     if (remainingMonths > 0) {
+      // Partial duration: split months/days
+      const partialMonths = Math.floor(remainingMonths);
+      const partialDays = Math.round((remainingMonths - partialMonths) * 30);
+      let durationStr = [];
+      if (partialMonths > 0) durationStr.push(`${partialMonths} months`);
+      if (partialDays > 0) durationStr.push(`${partialDays} days`);
+      if (durationStr.length === 0) durationStr.push("0 days");
       let partialInterest = currentTotal * monthlyFactor * remainingMonths;
       totalInterest += partialInterest;
       currentTotal += partialInterest;
-      output += `🗓️ Partial Duration: ${remainingMonths.toFixed(2)} months\n`;
-      output += `💰 Interest: ₹${formatIndianDecimal(
-        partialInterest.toFixed(2)
-      )}\n`;
-      output += `📊 Final Total: ₹${formatIndianDecimal(
-        currentTotal.toFixed(2)
-      )}\n\n`;
+      output += `🗓️ Partial Duration: ${durationStr.join(", ")}\n`;
+      output += `💰 Interest: ₹${formatIndianDecimal(partialInterest.toFixed(2))}\n`;
+      output += `📊 Final Total: ₹${formatIndianDecimal(currentTotal.toFixed(2))}\n\n`;
     }
   } else if (period === "quarterly") {
     const totalQuarters = Math.floor(totalMonths / 3);
@@ -765,16 +771,19 @@ calcBtn.addEventListener("click", () => {
       )}\n\n`;
     }
     if (remainingMonths > 0) {
+      // --- YOUR REQUESTED QUARTERLY PARTIAL DURATION FIX ---
+      const partialMonths = Math.floor(remainingMonths);
+      const partialDays = Math.round((remainingMonths - partialMonths) * 30);
+      let durationStr = [];
+      if (partialMonths > 0) durationStr.push(`${partialMonths} months`);
+      if (partialDays > 0) durationStr.push(`${partialDays} days`);
+      if (durationStr.length === 0) durationStr.push("0 days");
       let partialInterest = currentTotal * monthlyFactor * remainingMonths;
       totalInterest += partialInterest;
       currentTotal += partialInterest;
-      output += `🗓️ Partial Duration: ${remainingMonths.toFixed(2)} months\n`;
-      output += `💰 Interest: ₹${formatIndianDecimal(
-        partialInterest.toFixed(2)
-      )}\n`;
-      output += `📊 Final Total: ₹${formatIndianDecimal(
-        currentTotal.toFixed(2)
-      )}\n\n`;
+      output += `🗓️ Partial Duration: ${durationStr.join(", ")}\n`;
+      output += `💰 Interest: ₹${formatIndianDecimal(partialInterest.toFixed(2))}\n`;
+      output += `📊 Final Total: ₹${formatIndianDecimal(currentTotal.toFixed(2))}\n\n`;
     }
   } else if (period === "monthly") {
     const fullMonths = Math.floor(totalMonths);
@@ -795,16 +804,15 @@ calcBtn.addEventListener("click", () => {
       )}\n\n`;
     }
     if (partialDays > 0) {
+      let durationStr = [];
+      if (Math.round(partialDays) > 0) durationStr.push(`${Math.round(partialDays)} days`);
+      if (durationStr.length === 0) durationStr.push("0 days");
       let partialInterest = currentTotal * monthlyFactor * (partialDays / 30);
       totalInterest += partialInterest;
       currentTotal += partialInterest;
-      output += `🗓️ Partial Duration: ${partialDays.toFixed(0)} days\n`;
-      output += `💰 Interest: ₹${formatIndianDecimal(
-        partialInterest.toFixed(2)
-      )}\n`;
-      output += `📊 Final Total: ₹${formatIndianDecimal(
-        currentTotal.toFixed(2)
-      )}\n\n`;
+      output += `🗓️ Partial Duration: ${durationStr.join(", ")}\n`;
+      output += `💰 Interest: ₹${formatIndianDecimal(partialInterest.toFixed(2))}\n`;
+      output += `📊 Final Total: ₹${formatIndianDecimal(currentTotal.toFixed(2))}\n\n`;
     }
   }
   // 15. Finally, show the grand total (with words)
