@@ -5,16 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>KLU Portals</title>
   <style>
+    :root {
+      --bg-color: #121212;
+      --text-color: #ffffff;
+      --card-bg: #1f1f1f;
+      --card-hover: #2a2a2a;
+      --accent-color: #00bfff;
+      --card-title: #00e5ff;
+    }
+
+    body.light {
+      --bg-color: #ffffff;
+      --text-color: #000000;
+      --card-bg: #f0f0f0;
+      --card-hover: #e0e0e0;
+      --accent-color: #0077cc;
+      --card-title: #0055aa;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #121212;
-      color: #ffffff;
+      background-color: var(--bg-color);
+      color: var(--text-color);
       margin: 0;
       padding: 0;
       display: flex;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
     }
 
     .container {
@@ -26,59 +45,81 @@
     h1 {
       margin-bottom: 20px;
       font-size: 28px;
-      color: #00bfff;
+      color: var(--accent-color);
     }
 
     .card {
-      background: #1f1f1f;
+      background: var(--card-bg);
       padding: 20px;
       margin: 10px 0;
       border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
       cursor: pointer;
       transition: transform 0.2s ease, background-color 0.3s ease;
     }
 
     .card:hover {
       transform: scale(1.03);
-      background-color: #2a2a2a;
+      background-color: var(--card-hover);
     }
 
     .card h2 {
       margin: 0;
-      color: #00e5ff;
+      color: var(--card-title);
     }
 
     .card p {
       margin-top: 8px;
       font-size: 14px;
-      color: #cccccc;
+      color: var(--text-color);
+    }
+
+    .toggle-btn {
+      margin-top: 20px;
+      padding: 10px 18px;
+      background-color: var(--accent-color);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .toggle-btn:hover {
+      background-color: var(--card-title);
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🔗 KL University Portals</h1>
-    
+
     <div class="card" onclick="openPortal('https://newerp.kluniversity.in')">
       <h2>📘 New ERP</h2>
       <p>Access student records, attendance, exams & more.</p>
     </div>
-    
+
     <div class="card" onclick="openPortal('https://lms.kluniversity.in')">
       <h2>📚 LMS</h2>
       <p>Login to the Learning Management System.</p>
     </div>
-    
+
     <div class="card" onclick="openPortal('https://academics.klef.in')">
       <h2>🎓 Academics</h2>
       <p>Academic-related information and registration.</p>
     </div>
+
+    <button class="toggle-btn" onclick="toggleTheme()">🌗 Toggle Theme</button>
   </div>
 
   <script>
     function openPortal(url) {
       window.open(url, '_blank');
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('light');
     }
   </script>
 </body>
