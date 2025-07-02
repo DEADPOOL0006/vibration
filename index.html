@@ -3,124 +3,252 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>KLU Portals</title>
+  <title>Seedr – Cloud Torrent Downloader</title>
   <style>
-    :root {
-      --bg-color: #121212;
-      --text-color: #ffffff;
-      --card-bg: #1f1f1f;
-      --card-hover: #2a2a2a;
-      --accent-color: #00bfff;
-      --card-title: #00e5ff;
-    }
-
-    body.light {
-      --bg-color: #ffffff;
-      --text-color: #000000;
-      --card-bg: #f0f0f0;
-      --card-hover: #e0e0e0;
-      --accent-color: #0077cc;
-      --card-title: #0055aa;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      margin: 0;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      transition: background-color 0.3s, color 0.3s;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0d1117;
+      color: #f0f6fc;
     }
 
-    .container {
+    header {
+      background: #161b22;
+      padding: 25px 40px;
       text-align: center;
-      max-width: 500px;
-      padding: 20px;
+      border-bottom: 1px solid #30363d;
     }
 
-    h1 {
-      margin-bottom: 20px;
-      font-size: 28px;
-      color: var(--accent-color);
+    header h1 {
+      font-size: 2.8rem;
+      color: #58a6ff;
     }
 
-    .card {
-      background: var(--card-bg);
-      padding: 20px;
-      margin: 10px 0;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      cursor: pointer;
-      transition: transform 0.2s ease, background-color 0.3s ease;
-    }
-
-    .card:hover {
-      transform: scale(1.03);
-      background-color: var(--card-hover);
-    }
-
-    .card h2 {
-      margin: 0;
-      color: var(--card-title);
-    }
-
-    .card p {
+    header p {
+      color: #8b949e;
       margin-top: 8px;
-      font-size: 14px;
-      color: var(--text-color);
+      font-size: 1rem;
     }
 
-    .toggle-btn {
+    nav {
+      background: #21262d;
+      padding: 10px 0;
+      text-align: center;
+    }
+
+    nav a {
+      color: #c9d1d9;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #58a6ff;
+    }
+
+    section {
+      padding: 50px 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .hero {
+      text-align: center;
+    }
+
+    .hero h2 {
+      font-size: 2.2rem;
+      margin-bottom: 15px;
+      color: #79c0ff;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #c9d1d9;
+      max-width: 700px;
+      margin: auto;
+    }
+
+    .cta-btn {
       margin-top: 20px;
-      padding: 10px 18px;
-      background-color: var(--accent-color);
-      border: none;
-      border-radius: 8px;
-      color: white;
-      cursor: pointer;
+      padding: 14px 30px;
+      background: #238636;
+      color: #fff;
+      text-decoration: none;
       font-weight: bold;
-      transition: background-color 0.3s;
+      border-radius: 10px;
+      transition: 0.3s;
+      display: inline-block;
     }
 
-    .toggle-btn:hover {
-      background-color: var(--card-title);
+    .cta-btn:hover {
+      background: #2ea043;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      margin-top: 40px;
+    }
+
+    .feature-box {
+      background: #161b22;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,255,255,0.05);
+      transition: transform 0.3s;
+    }
+
+    .feature-box:hover {
+      transform: translateY(-5px);
+    }
+
+    .feature-box h3 {
+      color: #58a6ff;
+      margin-bottom: 10px;
+    }
+
+    .feature-box p {
+      font-size: 0.95rem;
+      color: #c9d1d9;
+    }
+
+    .faq {
+      margin-top: 40px;
+    }
+
+    .faq h3 {
+      color: #79c0ff;
+      margin-bottom: 10px;
+    }
+
+    .faq p {
+      margin-bottom: 20px;
+      color: #c9d1d9;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #0d1117;
+      border-top: 1px solid #30363d;
+      font-size: 0.9rem;
+      color: #8b949e;
+    }
+
+    a {
+      color: #58a6ff;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 2rem;
+      }
+
+      .hero h2 {
+        font-size: 1.6rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🔗 KL University Portals</h1>
 
-    <div class="card" onclick="openPortal('https://newerp.kluniversity.in')">
-      <h2>📘 New ERP</h2>
-      <p>Access student records, attendance, exams & more.</p>
+  <header>
+    <h1>Seedr</h1>
+    <p>Cloud Torrent Downloader – Fast, Private, and Easy</p>
+  </header>
+
+  <nav>
+    <a href="#about">About</a>
+    <a href="#features">Features</a>
+    <a href="#benefits">Benefits</a>
+    <a href="#faq">FAQ</a>
+    <a href="#start">Get Started</a>
+  </nav>
+
+  <section class="hero" id="about">
+    <h2>Download Torrents in the Cloud</h2>
+    <p>
+      Seedr is a cloud-based torrent client that lets you download, stream, and manage torrent files from any browser—no software or risky P2P connections required.
+      It's secure, fast, and mobile-friendly.
+    </p>
+    <a href="https://www.seedr.cc/" class="cta-btn" target="_blank">Visit Seedr Now 🚀</a>
+  </section>
+
+  <section id="features">
+    <h2 style="text-align:center; color:#58a6ff;">🌟 Key Features</h2>
+    <div class="feature-grid">
+      <div class="feature-box">
+        <h3>⚡ Instant Download</h3>
+        <p>Download files from magnet or torrent links in seconds using high-speed Seedr servers.</p>
+      </div>
+      <div class="feature-box">
+        <h3>📺 Stream Videos</h3>
+        <p>Watch videos directly from your Seedr account without downloading to your device.</p>
+      </div>
+      <div class="feature-box">
+        <h3>🔐 Private & Encrypted</h3>
+        <p>Your activity is secure and invisible to ISPs and trackers.</p>
+      </div>
+      <div class="feature-box">
+        <h3>📲 Works on All Devices</h3>
+        <p>Access your files from desktop, tablet, or phone—no installation needed.</p>
+      </div>
     </div>
+  </section>
 
-    <div class="card" onclick="openPortal('https://lms.kluniversity.in')">
-      <h2>📚 LMS</h2>
-      <p>Login to the Learning Management System.</p>
+  <section id="benefits">
+    <h2 style="text-align:center; color:#58a6ff;">✅ Why Use Seedr?</h2>
+    <div class="feature-grid">
+      <div class="feature-box">
+        <h3>🎯 No Ads</h3>
+        <p>Seedr offers a clean and distraction-free experience for everyone.</p>
+      </div>
+      <div class="feature-box">
+        <h3>📁 Easy File Management</h3>
+        <p>Organize, rename, and delete your torrent files from a beautiful dashboard.</p>
+      </div>
+      <div class="feature-box">
+        <h3>☁️ Free Cloud Storage</h3>
+        <p>Get started with free space and expand it by sharing and referring.</p>
+      </div>
+      <div class="feature-box">
+        <h3>🔥 Bypass Torrent Blocks</h3>
+        <p>Use Seedr to access torrents even on networks that block P2P traffic.</p>
+      </div>
     </div>
+  </section>
 
-    <div class="card" onclick="openPortal('https://academics.klef.in')">
-      <h2>🎓 Academics</h2>
-      <p>Academic-related information and registration.</p>
-    </div>
+  <section id="faq" class="faq">
+    <h2 style="text-align:center; color:#58a6ff;">❓ Frequently Asked Questions</h2>
+    <h3>Is Seedr free?</h3>
+    <p>Yes! Seedr offers a free tier with limited storage. You can upgrade for more features and space.</p>
 
-    <button class="toggle-btn" onclick="toggleTheme()">🌗 Toggle Theme</button>
-  </div>
+    <h3>Do I need to install anything?</h3>
+    <p>No installation needed. Everything runs from your browser securely in the cloud.</p>
 
-  <script>
-    function openPortal(url) {
-      window.open(url, '_blank');
-    }
+    <h3>Is my activity visible to ISPs?</h3>
+    <p>No. Since Seedr handles torrenting from their servers, your IP is never exposed to trackers.</p>
+  </section>
 
-    function toggleTheme() {
-      document.body.classList.toggle('light');
-    }
-  </script>
+  <section id="start" class="hero">
+    <h2>🚀 Start Downloading Now!</h2>
+    <p>Experience the future of torrenting — safer, faster, and easier with Seedr.</p>
+    <a href="https://www.seedr.cc/" class="cta-btn" target="_blank">Go to Seedr.cc</a>
+  </section>
+
+  <footer>
+    © 2025 | Made with ❤️ | Unofficial fan page for <a href="https://www.seedr.cc/" target="_blank">Seedr.cc</a>
+  </footer>
+
 </body>
 </html>
