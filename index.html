@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Seedr – Cloud Torrent Downloader</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
       margin: 0;
@@ -16,146 +17,548 @@
       font-family: 'Segoe UI', sans-serif;
       background-color: #0d1117;
       color: #f0f6fc;
+      line-height: 1.6;
     }
 
     header {
-      background: #161b22;
-      padding: 25px 40px;
+      background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+      padding: 30px 40px;
       text-align: center;
       border-bottom: 1px solid #30363d;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #58a6ff, #238636, #58a6ff);
+      z-index: 1;
     }
 
     header h1 {
-      font-size: 2.8rem;
+      font-size: 3rem;
       color: #58a6ff;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 10px rgba(88, 166, 255, 0.3);
+      position: relative;
+      display: inline-block;
+    }
+
+    header h1::after {
+      content: "";
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #58a6ff, transparent);
     }
 
     header p {
       color: #8b949e;
       margin-top: 8px;
-      font-size: 1rem;
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     nav {
       background: #21262d;
-      padding: 10px 0;
+      padding: 15px 0;
       text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.4);
     }
 
     nav a {
       color: #c9d1d9;
-      margin: 0 15px;
+      margin: 0 20px;
       text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s;
+      font-weight: 600;
+      transition: all 0.3s;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-size: 1.05rem;
     }
 
     nav a:hover {
       color: #58a6ff;
+      background: rgba(88, 166, 255, 0.1);
     }
 
     section {
-      padding: 50px 20px;
-      max-width: 1000px;
+      padding: 60px 20px;
+      max-width: 1200px;
       margin: auto;
     }
 
     .hero {
       text-align: center;
+      padding: 80px 20px;
+      position: relative;
+      background: radial-gradient(circle at center, #161b22 0%, #0d1117 100%);
+      border-radius: 15px;
+      margin: 30px auto;
+      border: 1px solid #30363d;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
 
     .hero h2 {
-      font-size: 2.2rem;
-      margin-bottom: 15px;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
       color: #79c0ff;
+      line-height: 1.3;
     }
 
     .hero p {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       color: #c9d1d9;
-      max-width: 700px;
-      margin: auto;
+      max-width: 800px;
+      margin: 20px auto;
     }
 
     .cta-btn {
-      margin-top: 20px;
-      padding: 14px 30px;
-      background: #238636;
+      margin-top: 30px;
+      padding: 16px 40px;
+      background: linear-gradient(135deg, #238636 0%, #2ea043 100%);
       color: #fff;
       text-decoration: none;
       font-weight: bold;
-      border-radius: 10px;
-      transition: 0.3s;
+      border-radius: 8px;
+      transition: all 0.3s;
       display: inline-block;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 15px rgba(35, 134, 54, 0.4);
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
     }
 
     .cta-btn:hover {
-      background: #2ea043;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(35, 134, 54, 0.6);
+    }
+
+    .cta-btn:active {
+      transform: translateY(1px);
+    }
+
+    .cta-btn::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(rgba(255, 255, 255, 0.1), transparent);
+      pointer-events: none;
     }
 
     .feature-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 25px;
-      margin-top: 40px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin-top: 50px;
     }
 
     .feature-box {
-      background: #161b22;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 0 12px rgba(0,255,255,0.05);
-      transition: transform 0.3s;
+      background: linear-gradient(145deg, #161b22 0%, #1a2028 100%);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      border: 1px solid #30363d;
+      position: relative;
+      overflow: hidden;
     }
 
     .feature-box:hover {
-      transform: translateY(-5px);
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      border-color: #58a6ff;
     }
 
     .feature-box h3 {
       color: #58a6ff;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .feature-box p {
-      font-size: 0.95rem;
+      font-size: 1.05rem;
       color: #c9d1d9;
+    }
+
+    .feature-box::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: linear-gradient(to bottom, #58a6ff, #238636);
+    }
+
+    .section-title {
+      text-align: center;
+      color: #58a6ff;
+      font-size: 2.3rem;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .section-title::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #58a6ff, transparent);
     }
 
     .faq {
       margin-top: 40px;
+      background: #161b22;
+      padding: 40px;
+      border-radius: 15px;
+      border: 1px solid #30363d;
+    }
+
+    .faq-item {
+      margin-bottom: 30px;
+      border-bottom: 1px solid #30363d;
+      padding-bottom: 20px;
+    }
+
+    .faq-item:last-child {
+      border-bottom: none;
     }
 
     .faq h3 {
       color: #79c0ff;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .faq p {
-      margin-bottom: 20px;
+      margin-bottom: 0;
       color: #c9d1d9;
+      font-size: 1.05rem;
+      padding-left: 30px;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin: 50px 0;
+    }
+
+    .stat-box {
+      text-align: center;
+      background: #161b22;
+      padding: 30px;
+      border-radius: 10px;
+      min-width: 200px;
+      flex: 1;
+      border: 1px solid #30363d;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #58a6ff;
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      color: #8b949e;
+      font-size: 1.1rem;
+    }
+
+    .testimonials {
+      margin: 60px 0;
+    }
+
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .testimonial {
+      background: #161b22;
+      padding: 30px;
+      border-radius: 10px;
+      border: 1px solid #30363d;
+      position: relative;
+    }
+
+    .testimonial::before {
+      content: """;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 4rem;
+      color: rgba(88, 166, 255, 0.1);
+      font-family: serif;
+      line-height: 1;
+    }
+
+    .testimonial-content {
+      margin-bottom: 20px;
+      font-style: italic;
+      color: #c9d1d9;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .author-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #30363d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #58a6ff;
+      font-weight: bold;
+    }
+
+    .author-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .author-name {
+      color: #79c0ff;
+      font-weight: bold;
+    }
+
+    .author-title {
+      color: #8b949e;
+      font-size: 0.9rem;
+    }
+
+    .pricing {
+      margin: 60px 0;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .pricing-card {
+      background: #161b22;
+      border-radius: 15px;
+      overflow: hidden;
+      border: 1px solid #30363d;
+      transition: all 0.3s;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .pricing-header {
+      padding: 30px;
+      text-align: center;
+      background: linear-gradient(135deg, #1a2028 0%, #161b22 100%);
+      border-bottom: 1px solid #30363d;
+    }
+
+    .pricing-name {
+      font-size: 1.5rem;
+      color: #58a6ff;
+      margin-bottom: 10px;
+    }
+
+    .pricing-price {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #79c0ff;
+    }
+
+    .pricing-period {
+      color: #8b949e;
+      font-size: 1rem;
+    }
+
+    .pricing-features {
+      padding: 30px;
+    }
+
+    .pricing-feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      color: #c9d1d9;
+    }
+
+    .pricing-feature i {
+      color: #238636;
+    }
+
+    .pricing-footer {
+      padding: 0 30px 30px;
+      text-align: center;
+    }
+
+    .pricing-btn {
+      display: inline-block;
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #1a2028 0%, #161b22 100%);
+      color: #58a6ff;
+      border: 1px solid #58a6ff;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+
+    .pricing-btn:hover {
+      background: #58a6ff;
+      color: #fff;
+    }
+
+    .highlight-card {
+      border: 2px solid #58a6ff;
+      position: relative;
+    }
+
+    .highlight-label {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #58a6ff;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
     }
 
     footer {
       text-align: center;
-      padding: 20px;
-      background: #0d1117;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
       border-top: 1px solid #30363d;
-      font-size: 0.9rem;
+      font-size: 1rem;
       color: #8b949e;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: #8b949e;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover {
+      color: #58a6ff;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .social-links a {
+      color: #8b949e;
+      font-size: 1.5rem;
+      transition: color 0.3s;
+    }
+
+    .social-links a:hover {
+      color: #58a6ff;
+    }
+
+    .copyright {
+      margin-top: 20px;
     }
 
     a {
       color: #58a6ff;
+      text-decoration: none;
+      transition: color 0.3s;
     }
 
-    @media (max-width: 600px) {
+    a:hover {
+      color: #79c0ff;
+      text-decoration: underline;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate {
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    .delay-1 { animation-delay: 0.2s; }
+    .delay-2 { animation-delay: 0.4s; }
+    .delay-3 { animation-delay: 0.6s; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
       header h1 {
-        font-size: 2rem;
+        font-size: 2.2rem;
       }
 
       .hero h2 {
-        font-size: 1.6rem;
+        font-size: 1.8rem;
+      }
+
+      nav a {
+        margin: 0 10px;
+        font-size: 0.95rem;
+        padding: 5px 8px;
+      }
+
+      .feature-grid, .pricing-grid, .testimonial-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        flex-direction: column;
       }
     }
   </style>
@@ -163,92 +566,369 @@
 <body>
 
   <header>
-    <h1>Seedr</h1>
-    <p>Cloud Torrent Downloader – Fast, Private, and Easy</p>
+    <h1 class="animate">Seedr</h1>
+    <p class="animate delay-1">Cloud Torrent Downloader – Fast, Private, and Easy</p>
   </header>
 
   <nav>
-    <a href="#about">About</a>
-    <a href="#features">Features</a>
-    <a href="#benefits">Benefits</a>
-    <a href="#faq">FAQ</a>
-    <a href="#start">Get Started</a>
+    <a href="#about" class="animate delay-1">About</a>
+    <a href="#features" class="animate delay-1">Features</a>
+    <a href="#benefits" class="animate delay-1">Benefits</a>
+    <a href="#pricing" class="animate delay-1">Pricing</a>
+    <a href="#testimonials" class="animate delay-1">Testimonials</a>
+    <a href="#faq" class="animate delay-1">FAQ</a>
+    <a href="#start" class="animate delay-1">Get Started</a>
   </nav>
 
   <section class="hero" id="about">
-    <h2>Download Torrents in the Cloud</h2>
-    <p>
-      Seedr is a cloud-based torrent client that lets you download, stream, and manage torrent files from any browser—no software or risky P2P connections required.
-      It's secure, fast, and mobile-friendly.
+    <h2 class="animate">Download Torrents in the Cloud</h2>
+    <p class="animate delay-1">
+      Seedr is a revolutionary cloud-based torrent client that lets you download, stream, and manage torrent files 
+      directly from any browser—no software installation or risky P2P connections required. Our advanced technology 
+      ensures your downloads are secure, lightning-fast, and accessible from any device.
     </p>
-    <a href="https://www.seedr.cc/" class="cta-btn" target="_blank">Visit Seedr Now 🚀</a>
+    <div class="animate delay-2">
+      <a href="https://www.seedr.cc/" class="cta-btn" target="_blank">Visit Seedr Now 🚀</a>
+    </div>
   </section>
 
   <section id="features">
-    <h2 style="text-align:center; color:#58a6ff;">🌟 Key Features</h2>
+    <h2 class="section-title animate">🌟 Key Features</h2>
     <div class="feature-grid">
-      <div class="feature-box">
-        <h3>⚡ Instant Download</h3>
-        <p>Download files from magnet or torrent links in seconds using high-speed Seedr servers.</p>
+      <div class="feature-box animate delay-1">
+        <h3><i class="fas fa-bolt"></i> Instant Download</h3>
+        <p>Download files from magnet or torrent links in seconds using our high-speed Seedr servers. 
+           Experience download speeds up to 10x faster than traditional torrent clients with our optimized network.</p>
       </div>
-      <div class="feature-box">
-        <h3>📺 Stream Videos</h3>
-        <p>Watch videos directly from your Seedr account without downloading to your device.</p>
+      <div class="feature-box animate delay-1">
+        <h3><i class="fas fa-tv"></i> Stream Videos</h3>
+        <p>Watch videos directly from your Seedr account without downloading to your device. Supports 
+           multiple formats including MP4, MKV, AVI with adaptive streaming quality based on your connection.</p>
       </div>
-      <div class="feature-box">
-        <h3>🔐 Private & Encrypted</h3>
-        <p>Your activity is secure and invisible to ISPs and trackers.</p>
+      <div class="feature-box animate delay-2">
+        <h3><i class="fas fa-lock"></i> Private & Encrypted</h3>
+        <p>Your activity is completely secure and invisible to ISPs and trackers. We use military-grade 
+           encryption for all transfers and don't log your download history or personal information.</p>
       </div>
-      <div class="feature-box">
-        <h3>📲 Works on All Devices</h3>
-        <p>Access your files from desktop, tablet, or phone—no installation needed.</p>
+      <div class="feature-box animate delay-2">
+        <h3><i class="fas fa-mobile-alt"></i> Works on All Devices</h3>
+        <p>Access your files from desktop, tablet, or phone—no installation needed. Our responsive web 
+           interface adapts perfectly to any screen size, and we offer dedicated apps for iOS and Android.</p>
+      </div>
+      <div class="feature-box animate delay-3">
+        <h3><i class="fas fa-folder-plus"></i> One-Click Organization</h3>
+        <p>Automatically sort your downloads into categorized folders. Our smart system recognizes file 
+           types and organizes them into Videos, Music, Documents, and more for easy access.</p>
+      </div>
+      <div class="feature-box animate delay-3">
+        <h3><i class="fas fa-cloud-download-alt"></i> Direct Downloads</h3>
+        <p>Get direct HTTP links for your downloaded files to share with friends or use with other services. 
+           Links are protected with encryption and can be password-protected for added security.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="stats">
+    <div class="stats">
+      <div class="stat-box animate">
+        <div class="stat-number">10M+</div>
+        <div class="stat-label">Happy Users</div>
+      </div>
+      <div class="stat-box animate delay-1">
+        <div class="stat-number">99.9%</div>
+        <div class="stat-label">Uptime</div>
+      </div>
+      <div class="stat-box animate delay-2">
+        <div class="stat-number">2PB</div>
+        <div class="stat-label">Daily Traffic</div>
+      </div>
+      <div class="stat-box animate delay-3">
+        <div class="stat-number">50+</div>
+        <div class="stat-label">Server Locations</div>
       </div>
     </div>
   </section>
 
   <section id="benefits">
-    <h2 style="text-align:center; color:#58a6ff;">✅ Why Use Seedr?</h2>
+    <h2 class="section-title animate">✅ Why Choose Seedr?</h2>
     <div class="feature-grid">
-      <div class="feature-box">
-        <h3>🎯 No Ads</h3>
-        <p>Seedr offers a clean and distraction-free experience for everyone.</p>
+      <div class="feature-box animate delay-1">
+        <h3><i class="fas fa-ad"></i> No Ads</h3>
+        <p>Seedr offers a clean, distraction-free experience. Unlike other services, we don't bombard 
+           you with popups or invasive advertising. Our focus is on providing the best user experience.</p>
       </div>
-      <div class="feature-box">
-        <h3>📁 Easy File Management</h3>
-        <p>Organize, rename, and delete your torrent files from a beautiful dashboard.</p>
+      <div class="feature-box animate delay-1">
+        <h3><i class="fas fa-folder-open"></i> Easy File Management</h3>
+        <p>Organize, rename, and delete your torrent files from our beautiful dashboard. Create custom 
+           folders, add tags, and use our powerful search to find files instantly among thousands.</p>
       </div>
-      <div class="feature-box">
-        <h3>☁️ Free Cloud Storage</h3>
-        <p>Get started with free space and expand it by sharing and referring.</p>
+      <div class="feature-box animate delay-2">
+        <h3><i class="fas fa-cloud"></i> Free Cloud Storage</h3>
+        <p>Get started with 2GB of free space and expand it up to 1TB by sharing and referring friends. 
+           Your files stay available in the cloud for 15 days after download by default.</p>
       </div>
-      <div class="feature-box">
-        <h3>🔥 Bypass Torrent Blocks</h3>
-        <p>Use Seedr to access torrents even on networks that block P2P traffic.</p>
+      <div class="feature-box animate delay-2">
+        <h3><i class="fas fa-unlock-alt"></i> Bypass Torrent Blocks</h3>
+        <p>Use Seedr to access torrents even on networks that block P2P traffic. Perfect for schools, 
+           workplaces, and countries with restrictive internet policies.</p>
+      </div>
+      <div class="feature-box animate delay-3">
+        <h3><i class="fas fa-shield-alt"></i> Malware Protection</h3>
+        <p>Our system automatically scans all downloads for viruses and malware before they reach your 
+           device. We block known malicious files to keep your system safe.</p>
+      </div>
+      <div class="feature-box animate delay-3">
+        <h3><i class="fas fa-history"></i> Download History</h3>
+        <p>Keep track of all your downloads with our comprehensive history feature. Re-download previous 
+           files with one click, even if they've been removed from your active storage.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" class="pricing">
+    <h2 class="section-title animate">💰 Simple, Transparent Pricing</h2>
+    <p style="text-align: center; margin-bottom: 40px; color: #8b949e;" class="animate delay-1">
+      Choose the plan that fits your needs. All plans include our full feature set with varying storage limits.
+    </p>
+    <div class="pricing-grid">
+      <div class="pricing-card animate delay-1">
+        <div class="pricing-header">
+          <div class="pricing-name">Free</div>
+          <div class="pricing-price">$0</div>
+          <div class="pricing-period">forever</div>
+        </div>
+        <div class="pricing-features">
+          <div class="pricing-feature">
+            <i class="fas fa-check"></i> 2GB Storage
+          </div>
+          <div class="pricing-feature">
+            <i class="fas fa-check"></i> 1 Simultaneous Download
+          </div>
+          <div class="pricing-feature">
+            <i class="fas fa-check"></i> Basic Speeds
+          </div>
+          <div class="pricing-feature">
+            <i class="fas fa-check"></i> 480p Streaming
+          </div>
+        </div>
+        <div class="pricing-footer">
+          <a href="https://www.seedr.cc/" class="pricing-btn" target="_blank">Get Started</a>
+        </div>
+      </div>
+      
+      <div class="pricing-card highlight-card animate delay-2">
+        <div class="highlight-label">MOST POPULAR</div>
+        <div class="pricing-header">
+          <div class="pricing-name">Premium</div>
+          <div class="pricing-price">$6.99</div>
+          <div class="pricing-period">per month</div>
+        </div>
+        <div class="pricing-features">
+          <div class="pricing-feature">
+            <i class="fas fa-check"></i> 1TB Storage
+          </div>
+          <div class="pricing-feature">
+            <i class="fas fa-check"></i> 5 Simultaneous Downloads
+          </div>
+          <div class="pricing-feature">
+            <i class="fas fa-check"></i> Priority Speeds
+          </div>
+          <div class="pricing-feature">
+            <i class="fas fa-check"></i> 1080p Streaming
+          </div>
+          <div class="pricing-feature">
+            <i class="fas fa-check"></i> ZIP Downloads
+          </div>
+        </div>
+        <div class="pricing-footer">
+          <a href="https://www.seedr.cc/" class="pricing-btn" target="_blank">Get Premium</a>
+        </div>
+      </div>
+      
+      <div class="pricing-card animate delay-3">
+        <div class="pricing-header">
+          <div class="pricing-name">VIP</div>
+          <div class="pricing-price">$14.99</div>
+          <div class="pricing-period">per month</div>
+        </div>
+        <div class="pricing-features">
+          <div class="pricing-feature">
+            <i class="fas fa-check"></i> 2.5TB Storage
+          </div>
+          <div class="pricing-feature">
+            <i class="fas fa-check"></i> Unlimited Downloads
+          </div>
+          <div class="pricing-feature">
+            <i class="fas fa-check"></i> Maximum Speeds
+          </div>
+          <div class="pricing-feature">
+            <i class="fas fa-check"></i> 4K Streaming
+          </div>
+          <div class="pricing-feature">
+            <i class="fas fa-check"></i> ZIP Downloads
+          </div>
+          <div class="pricing-feature">
+            <i class="fas fa-check"></i> Priority Support
+          </div>
+        </div>
+        <div class="pricing-footer">
+          <a href="https://www.seedr.cc/" class="pricing-btn" target="_blank">Go VIP</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="testimonials" class="testimonials">
+    <h2 class="section-title animate">💬 What Our Users Say</h2>
+    <div class="testimonial-grid">
+      <div class="testimonial animate delay-1">
+        <div class="testimonial-content">
+          "Seedr has completely changed how I download content. I used to worry about ISP notices, but now 
+          everything is encrypted and secure. The streaming feature is a game-changer for watching movies 
+          on my tablet without downloading huge files first."
+        </div>
+        <div class="testimonial-author">
+          <div class="author-avatar">JD</div>
+          <div class="author-info">
+            <div class="author-name">John D.</div>
+            <div class="author-title">Premium User</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="testimonial animate delay-2">
+        <div class="testimonial-content">
+          "As someone who travels frequently, Seedr is a lifesaver. I can start downloads from my phone at 
+          the airport and have them ready to watch by the time I'm on the plane. The mobile interface is 
+          clean and intuitive, and the speeds are consistently fast."
+        </div>
+        <div class="testimonial-author">
+          <div class="author-avatar">SM</div>
+          <div class="author-info">
+            <div class="author-name">Sarah M.</div>
+            <div class="author-title">VIP User</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="testimonial animate delay-3">
+        <div class="testimonial-content">
+          "I've tried many cloud torrent services over the years, and Seedr stands out for its reliability 
+          and simplicity. The free tier is generous enough for casual use, and when I needed more space, 
+          upgrading was seamless. Customer support actually responds quickly too!"
+        </div>
+        <div class="testimonial-author">
+          <div class="author-avatar">AR</div>
+          <div class="author-info">
+            <div class="author-name">Alex R.</div>
+            <div class="author-title">Free User</div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
   <section id="faq" class="faq">
-    <h2 style="text-align:center; color:#58a6ff;">❓ Frequently Asked Questions</h2>
-    <h3>Is Seedr free?</h3>
-    <p>Yes! Seedr offers a free tier with limited storage. You can upgrade for more features and space.</p>
-
-    <h3>Do I need to install anything?</h3>
-    <p>No installation needed. Everything runs from your browser securely in the cloud.</p>
-
-    <h3>Is my activity visible to ISPs?</h3>
-    <p>No. Since Seedr handles torrenting from their servers, your IP is never exposed to trackers.</p>
+    <h2 class="section-title animate">❓ Frequently Asked Questions</h2>
+    
+    <div class="faq-item animate delay-1">
+      <h3><i class="fas fa-question-circle"></i> Is Seedr really free?</h3>
+      <p>Yes! Seedr offers a completely free tier with 2GB of storage and basic features. This is perfect 
+         for occasional users. For power users, we offer affordable premium plans with more storage and 
+         enhanced features like faster speeds and higher quality streaming.</p>
+    </div>
+    
+    <div class="faq-item animate delay-2">
+      <h3><i class="fas fa-download"></i> Do I need to install any software?</h3>
+      <p>No installation is needed. Everything runs securely from your browser. However, we do offer 
+         optional desktop and mobile apps for those who prefer a dedicated application experience. These 
+         apps provide additional features like background downloading and notifications.</p>
+    </div>
+    
+    <div class="faq-item animate delay-3">
+      <h3><i class="fas fa-user-secret"></i> Is my activity visible to my ISP?</h3>
+      <p>No. Since Seedr handles all torrenting from our servers, your IP address is never exposed to 
+         trackers or other peers. Your ISP only sees encrypted HTTPS traffic to our servers, just like 
+         visiting any secure website. We don't log your download history or personal information.</p>
+    </div>
+    
+    <div class="faq-item animate delay-1">
+      <h3><i class="fas fa-globe"></i> What countries is Seedr available in?</h3>
+      <p>Seedr is available worldwide with servers in over 50 locations. We automatically route your 
+         traffic through the optimal server for your location. Some countries with strict internet 
+         censorship may require using our alternative domains or VPN services.</p>
+    </div>
+    
+    <div class="faq-item animate delay-2">
+      <h3><i class="fas fa-clock"></i> How long do my files stay on Seedr?</h3>
+      <p>Files in your active storage remain available for 15 days from the last access. Premium users 
+         get extended retention periods. You can always re-download files from your history if they've 
+         been removed from active storage, as long as the original torrent still has seeders.</p>
+    </div>
+    
+    <div class="faq-item animate delay-3">
+      <h3><i class="fas fa-lock"></i> Is my data secure with Seedr?</h3>
+      <p>Absolutely. We use industry-standard AES-256 encryption for all file transfers and storage. 
+         Your files are private to your account unless you choose to share them. We regularly undergo 
+         security audits and have a strict no-logs policy for user activity.</p>
+    </div>
   </section>
 
   <section id="start" class="hero">
-    <h2>🚀 Start Downloading Now!</h2>
-    <p>Experience the future of torrenting — safer, faster, and easier with Seedr.</p>
-    <a href="https://www.seedr.cc/" class="cta-btn" target="_blank">Go to Seedr.cc</a>
+    <h2 class="animate">🚀 Ready to Experience Cloud Torrenting?</h2>
+    <p class="animate delay-1">
+      Join over 10 million users who enjoy fast, secure, and private torrent downloads with Seedr. 
+      Whether you're a casual downloader or a power user, we have the perfect plan for your needs.
+    </p>
+    <div class="animate delay-2">
+      <a href="https://www.seedr.cc/" class="cta-btn" target="_blank">Start Using Seedr Today</a>
+    </div>
   </section>
 
   <footer>
-    © 2025 | Made with ❤️ | Unofficial fan page for <a href="https://www.seedr.cc/" target="_blank">Seedr.cc</a>
+    <div class="footer-links animate">
+      <a href="#about">About</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://www.seedr.cc/terms" target="_blank">Terms</a>
+      <a href="https://www.seedr.cc/privacy" target="_blank">Privacy</a>
+      <a href="https://www.seedr.cc/contact" target="_blank">Contact</a>
+    </div>
+    
+    <div class="social-links animate delay-1">
+      <a href="https://twitter.com/seedr" target="_blank"><i class="fab fa-twitter"></i></a>
+      <a href="https://facebook.com/seedr" target="_blank"><i class="fab fa-facebook"></i></a>
+      <a href="https://reddit.com/r/seedr" target="_blank"><i class="fab fa-reddit"></i></a>
+      <a href="https://github.com/seedr" target="_blank"><i class="fab fa-github"></i></a>
+    </div>
+    
+    <div class="copyright animate delay-2">
+      © 2025 Seedr.cc | Unofficial fan page for <a href="https://www.seedr.cc/" target="_blank">Seedr.cc</a> | Made with <i class="fas fa-heart" style="color: #ff6b6b;"></i> by Seedr fans
+    </div>
   </footer>
 
+  <script>
+    // Simple animation trigger on scroll
+    document.addEventListener('DOMContentLoaded', function() {
+      const animateElements = document.querySelectorAll('.animate');
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = 1;
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      }, { threshold: 0.1 });
+      
+      animateElements.forEach(el => {
+        el.style.opacity = 0;
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+        observer.observe(el);
+      });
+    });
+  </script>
 </body>
 </html>
