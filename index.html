@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Infinity War Vibration Experience</title>
+  <title>Infinity War BGM Vibration Sync</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
@@ -149,6 +149,20 @@
       display: inline-block;
     }
 
+    .beat-indicator {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(230, 36, 41, 0.3);
+      margin: 10px auto;
+      transition: transform 0.1s, background 0.1s;
+    }
+
+    .beat-indicator.active {
+      transform: scale(1.5);
+      background: var(--marvel-red);
+    }
+
     footer {
       margin-top: 40px;
       font-size: 0.8rem;
@@ -175,7 +189,7 @@
 
   <header>
     <h1>AVENGERS: INFINITY WAR</h1>
-    <h2>Immersive BGM Vibration Experience</h2>
+    <h2>BGM Vibration Sync Experience</h2>
   </header>
 
   <div class="container">
@@ -187,6 +201,8 @@
     <div class="visualizer">
       <canvas id="visualizerCanvas"></canvas>
     </div>
+
+    <div class="beat-indicator" id="beatIndicator"></div>
 
     <div class="intensity-control">
       <label for="sensitivity">Vibration Sensitivity: <span id="sensitivityValue">70</span>%</label>
@@ -215,19 +231,26 @@
     const sensitivityControl = document.getElementById('sensitivity');
     const sensitivityValue = document.getElementById('sensitivityValue');
     const statusElement = document.getElementById('status');
-
-    // Setup canvas dimensions
-    function setupCanvas() {
-      canvas.width = visualizerContainer.offsetWidth;
-      canvas.height = visualizerContainer.offsetHeight;
-    }
+    const beatIndicator = document.getElementById('beatIndicator');
 
     // Audio analysis variables
     let audioCtx, analyser, dataArray, source;
     let isVibrationEnabled = false;
     let isVisualizerVisible = false;
     let animationId;
-    let sensitivity = 0.7; // Default sensitivity (70%)
+    let sensitivity = 0.7;
+    let lastBeatTime = 0;
+    let beatInterval = 500; // Initial guess, will be updated dynamically
+    let energyHistory = [];
+    const HISTORY_SIZE = 20;
+    let beatThreshold = 0.3;
+    let isBeat = false;
+
+    // Setup canvas dimensions
+    function setupCanvas() {
+      canvas.width = visualizerContainer.offsetWidth;
+      canvas.height = visualizerContainer.offsetHeight;
+    }
 
     // Initialize audio context on user interaction
     function initAudio() {
@@ -245,16 +268,43 @@
       }
     }
 
-    // Vibration pattern generator
-    function getVibrationPattern(intensity) {
-      // Base pattern with intensity adjustment
-      const baseDuration = 50; // ms
-      const maxDuration = 100; // ms
+    // Beat detection algorithm
+    function detectBeat(energy) {
+      // Store energy in history
+      energyHistory.push(energy);
+      if (energyHistory.length > HISTORY_SIZE) {
+        energyHistory.shift();
+      }
       
-      // Scale duration based on intensity (0-1)
-      const duration = baseDuration + (intensity * (maxDuration - baseDuration));
+      // Calculate average energy
+      const avgEnergy = energyHistory.reduce((sum, e) => sum + e, 0) / energyHistory.length;
       
-      return duration;
+      // Dynamic threshold (higher when energy is consistently high)
+      const dynamicThreshold = beatThreshold + (avgEnergy * 0.5);
+      
+      // Detect beat if current energy is significantly higher than average
+      if (energy > avgEnergy * (1.5 + sensitivity) && energy > dynamicThreshold) {
+        const now = Date.now();
+        if (now - lastBeatTime > 100) { // Prevent too close beats
+          lastBeatTime = now;
+          return true;
+        }
+      }
+      return false;
+    }
+
+    // Vibration pattern for beats
+    function triggerBeatVibration() {
+      if (!navigator.vibrate) return;
+      
+      // Different vibration patterns based on beat strength
+      const pattern = [
+        50, // vibrate for 50ms
+        30, // pause for 30ms
+        40  // vibrate for 40ms (for stronger feel)
+      ];
+      
+      navigator.vibrate(pattern);
     }
 
     // Audio analysis and vibration
@@ -263,29 +313,29 @@
       
       analyser.getByteFrequencyData(dataArray);
       
-      // Focus on different frequency ranges
-      const bassRange = dataArray.slice(0, 10); // 0-200Hz approx
-      const midRange = dataArray.slice(10, 50); // 200-1000Hz approx
-      const highRange = dataArray.slice(50, 100); // 1000-5000Hz approx
+      // Focus on bass frequencies (0-250Hz) for beat detection
+      const bassData = dataArray.slice(0, 20);
+      const bassEnergy = bassData.reduce((sum, value) => sum + value, 0) / bassData.length / 255;
       
-      // Calculate average intensities
-      const bassAvg = bassRange.reduce((a, b) => a + b, 0) / bassRange.length;
-      const midAvg = midRange.reduce((a, b) => a + b, 0) / midRange.length;
-      const highAvg = highRange.reduce((a, b) => a + b, 0) / highRange.length;
+      // Detect beat
+      isBeat = detectBeat(bassEnergy);
       
-      // Weighted average favoring bass and mid frequencies
-      const weightedAvg = (bassAvg * 0.5 + midAvg * 0.35 + highAvg * 0.15);
+      // Visual feedback for beat
+      if (isBeat) {
+        beatIndicator.classList.add('active');
+        setTimeout(() => beatIndicator.classList.remove('active'), 100);
+        
+        if (isVibrationEnabled) {
+          triggerBeatVibration();
+        }
+      }
       
-      // Normalize to 0-1 range
-      const normalizedIntensity = Math.min(weightedAvg / 255, 1);
+      // Additional vibration for strong mid-range frequencies (for BGM accents)
+      const midData = dataArray.slice(20, 80);
+      const midEnergy = midData.reduce((sum, value) => sum + value, 0) / midData.length / 255;
       
-      // Apply sensitivity
-      const threshold = 0.3 * (1 - sensitivity);
-      const scaledIntensity = Math.max(0, normalizedIntensity - threshold) * (1 / (1 - threshold));
-      
-      if (isVibrationEnabled && scaledIntensity > 0 && navigator.vibrate) {
-        const vibrationDuration = getVibrationPattern(scaledIntensity);
-        navigator.vibrate(vibrationDuration);
+      if (midEnergy > 0.6 * sensitivity && !isBeat && isVibrationEnabled) {
+        navigator.vibrate(30); // Short vibration for accents
       }
       
       if (isVisualizerVisible) {
@@ -297,23 +347,28 @@
       }
     }
 
-    // Draw audio visualizer
+    // Draw audio visualizer with beat emphasis
     function drawVisualizer() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       const barWidth = canvas.width / dataArray.length * 2.5;
       let x = 0;
       
-      // Gradient for visualizer
-      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      gradient.addColorStop(0, '#e62429');
-      gradient.addColorStop(0.7, '#f0e6d2');
-      gradient.addColorStop(1, '#ffffff');
-      
-      ctx.fillStyle = gradient;
+      // Highlight bass frequencies in red when beat is detected
+      const bassEnd = 20;
       
       for (let i = 0; i < dataArray.length; i++) {
         const barHeight = (dataArray[i] / 255) * canvas.height;
+        
+        if (i < bassEnd && isBeat) {
+          ctx.fillStyle = '#ff0000';
+        } else if (i < bassEnd) {
+          ctx.fillStyle = '#e62429';
+        } else if (i < 80) {
+          ctx.fillStyle = '#f0e6d2';
+        } else {
+          ctx.fillStyle = '#ffffff';
+        }
         
         ctx.fillRect(
           x,
@@ -388,6 +443,7 @@
     sensitivityControl.addEventListener('input', () => {
       sensitivity = sensitivityControl.value / 100;
       sensitivityValue.textContent = sensitivityControl.value;
+      beatThreshold = 0.3 * (1.5 - sensitivity); // Adjust beat threshold based on sensitivity
     });
 
     // Handle window resize
@@ -400,7 +456,7 @@
     // Check vibration support
     if (!navigator.vibrate) {
       statusElement.textContent = 'Vibration not supported on this device';
-      }
+    }
   </script>
 
 </body>
