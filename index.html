@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Infinity War BGM Vibration Sync</title>
+  <title>Infinity War MKV Vibration Sync</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
@@ -163,20 +163,6 @@
       background: var(--marvel-red);
     }
 
-    .timeline-marker {
-      position: absolute;
-      height: 100%;
-      width: 2px;
-      background: rgba(230, 36, 41, 0.5);
-      top: 0;
-    }
-
-    .timeline-marker.active {
-      background: var(--marvel-red);
-      width: 3px;
-      box-shadow: 0 0 10px var(--marvel-red);
-    }
-
     footer {
       margin-top: 40px;
       font-size: 0.8rem;
@@ -203,12 +189,12 @@
 
   <header>
     <h1>AVENGERS: INFINITY WAR</h1>
-    <h2>Precise BGM Vibration Sync</h2>
+    <h2>MKV BGM Vibration Sync</h2>
   </header>
 
   <div class="container">
     <video id="trailer" controls crossorigin="anonymous">
-      <source src="https://www.youtube.com/embed/6ZfuNTqbHE8" type="video/mp4">
+      <source src="https://github.com/DEADPOOL0006/vibration/blob/main/Marvel%20Studios%20Avengers%20Infinity%20War%20Official%20Trailer.mkv?raw=true" type="video/mp4">
       Your browser does not support the video tag.
     </video>
 
@@ -226,21 +212,19 @@
     <div class="controls">
       <button id="toggleVibration">Enable Vibration</button>
       <button id="toggleVisualizer">Show Visualizer</button>
-      <button id="toggleMarkers">Show Key Moments</button>
     </div>
 
     <div class="status" id="status">Vibration: Disabled</div>
   </div>
 
   <footer>
-    For best experience, use on mobile devices with vibration support
+    Note: GitHub may throttle large video files. For best results, host the video elsewhere.
   </footer>
 
   <script>
     const video = document.getElementById('trailer');
     const toggleVibrationBtn = document.getElementById('toggleVibration');
     const toggleVisualizerBtn = document.getElementById('toggleVisualizer');
-    const toggleMarkersBtn = document.getElementById('toggleMarkers');
     const visualizerContainer = document.querySelector('.visualizer');
     const canvas = document.getElementById('visualizerCanvas');
     const ctx = canvas.getContext('2d');
@@ -249,61 +233,34 @@
     const statusElement = document.getElementById('status');
     const beatIndicator = document.getElementById('beatIndicator');
 
-    // Key moments in the trailer (in seconds) - specific to the 6ZfuNTqbHE8 trailer
+    // Key moments in the Infinity War trailer (timings may need adjustment)
     const keyMoments = [
-      { time: 8, intensity: 0.8 },   // "We have a Hulk" punch
-      { time: 15, intensity: 0.9 },  // Thor's entrance
-      { time: 27, intensity: 1.0 },  // "Fun isn't something..." snap
-      { time: 36, intensity: 0.9 },  // Iron Man suit-up
-      { time: 48, intensity: 1.0 },  // Big team shot with music swell
-      { time: 62, intensity: 0.8 },  // "Get this man a shield"
-      { time: 78, intensity: 1.0 },  // Final title card with big musical hit
+      { time: 8.2, intensity: 0.9 },   // "We have a Hulk" punch
+      { time: 15.5, intensity: 0.8 },  // Thor's entrance
+      { time: 27.3, intensity: 1.0 },  // "Fun isn't something..." snap
+      { time: 36.1, intensity: 0.9 },  // Iron Man suit-up
+      { time: 48.7, intensity: 1.0 },  // Big team shot with music swell
+      { time: 62.4, intensity: 0.8 },  // "Get this man a shield"
+      { time: 78.9, intensity: 1.0 },  // Final title card with big musical hit
     ];
 
     // Audio analysis variables
     let audioCtx, analyser, dataArray, source;
     let isVibrationEnabled = false;
     let isVisualizerVisible = false;
-    let isMarkersVisible = false;
     let animationId;
     let sensitivity = 0.7;
     let lastBeatTime = 0;
-    let beatInterval = 500;
     let energyHistory = [];
     const HISTORY_SIZE = 45;
     let beatThreshold = 0.3;
     let isBeat = false;
     let lastVibrationTime = 0;
-    let markerElements = [];
 
     // Setup canvas dimensions
     function setupCanvas() {
       canvas.width = visualizerContainer.offsetWidth;
       canvas.height = visualizerContainer.offsetHeight;
-    }
-
-    // Create timeline markers for key moments
-    function createTimelineMarkers() {
-      // Remove existing markers
-      markerElements.forEach(marker => marker.remove());
-      markerElements = [];
-      
-      const videoRect = video.getBoundingClientRect();
-      const videoDuration = video.duration;
-      
-      if (isMarkersVisible && videoDuration > 0) {
-        keyMoments.forEach(moment => {
-          const marker = document.createElement('div');
-          marker.className = 'timeline-marker';
-          marker.style.left = `${(moment.time / videoDuration) * 100}%`;
-          
-          // Add tooltip
-          marker.title = `Key moment at ${moment.time}s`;
-          
-          video.parentNode.insertBefore(marker, video.nextSibling);
-          markerElements.push(marker);
-        });
-      }
     }
 
     // Initialize audio context on user interaction
@@ -322,7 +279,7 @@
       }
     }
 
-    // Enhanced beat detection algorithm specifically for this trailer's BGM
+    // Enhanced beat detection algorithm for MKV audio
     function detectBeat(energy, currentTime) {
       // Store energy in history
       energyHistory.push(energy);
@@ -330,36 +287,33 @@
         energyHistory.shift();
       }
       
-      // Calculate average energy with more weight on recent values
+      // Calculate weighted average (recent values have more weight)
       let avgEnergy = 0;
       let weightSum = 0;
       energyHistory.forEach((e, i) => {
-        const weight = (i + 1) / energyHistory.length; // Recent values have more weight
+        const weight = (i + 1) / energyHistory.length;
         avgEnergy += e * weight;
         weightSum += weight;
       });
       avgEnergy /= weightSum;
       
-      // Dynamic threshold based on music intensity and sensitivity
-      const dynamicThreshold = beatThreshold * (0.7 + sensitivity * 0.6);
-      
-      // Check for key moments (manual synchronization points)
-      const currentTimeSec = currentTime;
+      // Check for predefined key moments first
       for (const moment of keyMoments) {
-        if (Math.abs(currentTimeSec - moment.time) < 0.3) {
+        if (Math.abs(currentTime - moment.time) < 0.15) {
           return { isBeat: true, intensity: moment.intensity };
         }
       }
       
-      // Detect beat if current energy is significantly higher than average
+      // Dynamic threshold based on sensitivity and music dynamics
+      const dynamicThreshold = beatThreshold * (0.7 + sensitivity * 0.6);
       const energyRatio = energy / Math.max(avgEnergy, 0.001);
       const thresholdRatio = 1.3 + (sensitivity * 0.7);
       
+      // Detect beat if energy exceeds threshold
       if (energyRatio > thresholdRatio && energy > dynamicThreshold) {
         const now = Date.now();
         if (now - lastBeatTime > 100) { // Prevent too close beats
           lastBeatTime = now;
-          // Calculate intensity based on how much the energy exceeds the average
           const intensity = Math.min(1, (energyRatio - thresholdRatio) / 2);
           return { isBeat: true, intensity: 0.5 + intensity * 0.5 };
         }
@@ -420,21 +374,13 @@
         }
       }
       
-      // Additional vibration for strong mid-range frequencies (melodic accents)
+      // Additional vibration for strong mid-range frequencies
       if (midEnergy > 0.5 * sensitivity && !isBeat && isVibrationEnabled) {
-        // Only vibrate if we haven't recently vibrated
         if (Date.now() - lastVibrationTime > 150) {
           navigator.vibrate(30);
           lastVibrationTime = Date.now();
         }
       }
-      
-      // Highlight active markers
-      markerElements.forEach((marker, i) => {
-        const moment = keyMoments[i];
-        const isActive = Math.abs(currentTime - moment.time) < 0.5;
-        marker.classList.toggle('active', isActive);
-      });
       
       if (isVisualizerVisible) {
         drawVisualizer();
@@ -449,7 +395,7 @@
     function drawVisualizer() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      const barWidth = canvas.width / 100; // Only show first 100 frequency bins
+      const barWidth = canvas.width / 100;
       let x = 0;
       
       // Gradient for visualizer
@@ -486,7 +432,6 @@
       if (isVibrationEnabled || isVisualizerVisible) {
         animationId = requestAnimationFrame(analyzeAudio);
       }
-      createTimelineMarkers();
     });
 
     video.addEventListener('pause', () => {
@@ -501,13 +446,6 @@
       }
     });
 
-    video.addEventListener('timeupdate', () => {
-      // Update marker positions if duration changes
-      if (video.duration > 0 && markerElements.length !== keyMoments.length) {
-        createTimelineMarkers();
-      }
-    });
-
     toggleVibrationBtn.addEventListener('click', () => {
       isVibrationEnabled = !isVibrationEnabled;
       
@@ -516,7 +454,6 @@
         statusElement.textContent = 'Vibration: Enabled';
         statusElement.style.backgroundColor = 'rgba(230, 36, 41, 0.4)';
         
-        // Start analysis if video is playing
         if (!video.paused && !video.ended) {
           initAudio();
           animationId = requestAnimationFrame(analyzeAudio);
@@ -536,7 +473,6 @@
         visualizerContainer.style.display = 'block';
         setupCanvas();
         
-        // Start analysis if video is playing
         if (!video.paused && !video.ended) {
           initAudio();
           animationId = requestAnimationFrame(analyzeAudio);
@@ -547,32 +483,16 @@
       }
     });
 
-    toggleMarkersBtn.addEventListener('click', () => {
-      isMarkersVisible = !isMarkersVisible;
-      
-      if (isMarkersVisible) {
-        toggleMarkersBtn.textContent = 'Hide Key Moments';
-        createTimelineMarkers();
-      } else {
-        toggleMarkersBtn.textContent = 'Show Key Moments';
-        markerElements.forEach(marker => marker.remove());
-        markerElements = [];
-      }
-    });
-
     sensitivityControl.addEventListener('input', () => {
       sensitivity = sensitivityControl.value / 100;
       sensitivityValue.textContent = sensitivityControl.value;
-      beatThreshold = 0.25 * (1.5 - sensitivity); // Adjust beat threshold based on sensitivity
+      beatThreshold = 0.25 * (1.5 - sensitivity);
     });
 
     // Handle window resize
     window.addEventListener('resize', () => {
       if (isVisualizerVisible) {
         setupCanvas();
-      }
-      if (isMarkersVisible) {
-        createTimelineMarkers();
       }
     });
 
@@ -581,6 +501,11 @@
       statusElement.textContent = 'Vibration not supported on this device';
       toggleVibrationBtn.disabled = true;
     }
+
+    // Note about MKV support
+    video.addEventListener('error', () => {
+      statusElement.textContent = 'Error: Browser may not support MKV format directly';
+    });
   </script>
 
 </body>
